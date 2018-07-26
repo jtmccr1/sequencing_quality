@@ -1,8 +1,28 @@
 import React, { Component } from 'react';
 import logo from '../images/logo.svg';
 import '../styles/App.css';
+import { getData } from '../utils/getData';
 
 class App extends Component {
+	constructor(props) {
+		super(props);
+		this.addGenome = data => {
+			console.log(data);
+		};
+		this.addVariants = data => {
+			console.log(data);
+		};
+		this.addCoverage = data => {
+			console.log(data);
+		};
+	}
+
+	componentDidMount() {
+		getData('requestGenomeAnnotation', this.addGenome);
+		getData('requestCoverageData', this.addCoverage);
+		getData('requestVariantData', this.addVariants);
+	}
+
 	render() {
 		return (
 			<div className="App">

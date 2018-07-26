@@ -60,4 +60,39 @@ module.exports = {
 		}
 		return parsedDataSet;
 	},
+
+	parseGenomeAnnotation(data) {
+		var dataset = data.genome;
+		var ORFboxes = [];
+		var cumSize = 0;
+		var offSet = 0;
+		for (var i = 0; i < dataset.length; i++) {
+			//cycle through each segment
+			var segment = dataset[i];
+			for (var j = 0; j < segment.ORF.length; j++) {
+				var name = dataset[i].ORF[j].name;
+				var ORF = dataset[i].ORF[j];
+				var ORFsize = 0;
+				for (var k = 0; k < ORF.regions.length; k++) {
+					var region = ORF.regions[k];
+					var geneBox = {
+						name: name,
+						ORFstart: region.start + cumSize,
+						ORFend: region.stop + cumSize,
+						verticleOffSet: offSet,
+						fivePrimeUtrStart: cumSize + ORFsize,
+						fivePrimeUtrEnd: region.start + cumSize,
+						threePrimeUtrStart: region.stop + cumSize,
+						threePrimeUtrEnd: cumSize + segment.size,
+					};
+					ORFboxes.push(geneBox);
+					ORFsize = ORFsize + region.stop;
+				}
+				offSet = offSet - 1;
+			}
+			cumSize = cumSize + segment.size;
+			offSet = 0;
+		}
+		return ORFboxes;
+	},
 };
