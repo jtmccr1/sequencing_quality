@@ -8,6 +8,6 @@ export const getData = function getData(route, Callback) {
 			Callback(jsonData);
 		})
 		.catch(err => {
-			console.error('Error in requestReads:', err);
+			console.error(`Error in :${prefix}/${route}, ${err}`);
 		});
 };
