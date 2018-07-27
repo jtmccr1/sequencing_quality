@@ -6,14 +6,42 @@ import { getData } from '../utils/getData';
 class App extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			genomeAnnotation: [],
+			variantData: [],
+			coverageData: [],
+		};
 		this.addGenome = data => {
-			console.log(data);
+			const variantData = this.state.variantData;
+			const coverageData = this.state.coverageData;
+			const newState = {
+				genomeAnnotation: data,
+				variantData: variantData,
+				coverageData: coverageData,
+			};
+			this.setState(newState);
 		};
+
 		this.addVariants = data => {
-			console.log(data);
+			const genomeAnnotation = this.state.genomeAnnotation;
+			const coverageData = this.state.coverageData;
+			const newState = {
+				genomeAnnotation: genomeAnnotation,
+				variantData: data,
+				coverageData: coverageData,
+			};
+			this.setState(newState);
 		};
+
 		this.addCoverage = data => {
-			console.log(data);
+			const genomeAnnotation = this.state.genomeAnnotation;
+			const variantData = this.state.variantData;
+			const newState = {
+				genomeAnnotation: genomeAnnotation,
+				variantData: variantData,
+				coverageData: data,
+			};
+			this.setState(newState);
 		};
 	}
 
