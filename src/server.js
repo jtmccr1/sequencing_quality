@@ -27,7 +27,7 @@ app.get('/requestVariantData', (req, res) => {
 		const variants = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'variants', file), 'utf-8'));
 		//Parse data
 		var parsedVariants = parseVariantData(variants);
-		data.push(parsedVariants);
+		data.push(...parsedVariants);
 	});
 	res.json(data);
 });

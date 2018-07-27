@@ -58,6 +58,11 @@ module.exports = {
 				parsedDataSet.push(datapoint);
 			}
 		}
+		//https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
+		parsedDataSet.sort(function(a, b) {
+			return a.concat_pos > b.concat_pos ? 1 : b.concat_pos > a.concat_pos ? -1 : 0;
+		});
+
 		return parsedDataSet;
 	},
 

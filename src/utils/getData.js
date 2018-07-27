@@ -5,7 +5,7 @@ export const getData = function getData(route, Callback) {
 		.then(res => res.json())
 		.then(jsonData => {
 			// console.log("setting run info to:", jsonData)
-			Callback(jsonData);
+			Callback(jsonData, route);
 		})
 		.catch(err => {
 			console.error(`Error in :${prefix}/${route}, ${err}`);

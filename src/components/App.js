@@ -3,7 +3,7 @@ import { css } from 'glamor';
 import logo from '../images/logo.svg';
 import '../styles/App.css';
 import { getData } from '../utils/getData';
-import CoveragePlot from './coveragePlot';
+import Summary from './Summary';
 import { channelColours } from '../utils/commonStyles';
 
 const panelContainer = css({
@@ -16,19 +16,38 @@ const panelContainer = css({
 class App extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { data: false };
-		this.addData = newData => {
-			this.setState(this.calcNewState(newData));
+		this.state = {
+			data: false,
+			coverageData: [],
+			genomeAnnotation: [],
+			variantData: [],
+		};
+		this.addData = (newData, route) => {
+			this.setState(this.calcNewState(newData, route));
 		};
 	}
 
-	calcNewState(newData) {
+	calcNewState(newData, route) {
 		console.time('calcNewState');
-		const newState = {};
+		var newState = this.state;
 		if (!this.state.data) {
 			/* must initialise! */
-			newState.data = true;
-			newState.coverageData = newData;
+
+			if (route === 'requestCoverageData') {
+				newState.coverageData = newData;
+			} else if (route === 'requestGenomeAnnotation') {
+				newState.genomeAnnotation = newData;
+			} else if (route === 'requestVariantData') {
+				newState.variantData = newData;
+			}
+
+			if (
+				(newState.variantData.length > 0) &
+				(newState.coverageData.length > 0) &
+				(newState.genomeAnnotation.length > 0)
+			) {
+				newState.data = true;
+			}
 		} else {
 			/* a data update */
 			newState.data = true;
@@ -39,13 +58,10 @@ class App extends Component {
 		return newState;
 	}
 	componentDidMount() {
-		//getData('requestGenomeAnnotation', this.addGenome);
+		getData('requestGenomeAnnotation', this.addData);
 		getData('requestCoverageData', this.addData);
-		//getData('requestVariantData', this.addVariants);
+		getData('requestVariantData', this.addData);
 	}
-	// componentDidMount() {
-	// 	getData('requestGenomeAnnotation', this.addData);
-	// }
 
 	render() {
 		return (
@@ -54,16 +70,13 @@ class App extends Component {
 					<img src={logo} className="App-logo" alt="logo" />
 					<h1 className="App-title">Welcome to React</h1>
 				</header>
-				<p className="App-intro">
-					To get started, edit <code>src/App.js</code> and save to reload.
-				</p>
+
 				{this.state.data ? (
-					<div {...panelContainer}>
-						<CoveragePlot
-							style={{ width: '35%', margin: 'auto', height: '100%' }}
-							title={'Coverage'}
+					<div>
+						<Summary
 							coverageData={this.state.coverageData}
-							colours={channelColours}
+							genomeAnnotation={this.state.genomeAnnotation}
+							variantData={this.state.variantData}
 						/>
 					</div>
 				) : (
