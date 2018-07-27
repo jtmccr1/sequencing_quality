@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import CoveragePlot from './coveragePlot';
 import VariantPlot from './variantPlot';
 import { channelColours } from '../utils/commonStyles';
+import CummulativeDistribution from './cummulativeDistribution';
 
 const panelContainer = css({
 	width: 'calc(100% - 30px)',
@@ -39,6 +40,12 @@ class Summary extends React.Component {
 					<VariantPlot
 						style={{ width: '35%', margin: 'auto', height: '100%' }}
 						title={'Frequency'}
+						variantData={this.props.variantData}
+						colours={channelColours}
+					/>
+					<CummulativeDistribution
+						style={{ width: '35%', margin: 'auto', height: '100%' }}
+						title={'CDF of variant frequencies'}
 						variantData={this.props.variantData}
 						colours={channelColours}
 					/>

@@ -38,7 +38,7 @@ class App extends Component {
 			} else if (route === 'requestGenomeAnnotation') {
 				newState.genomeAnnotation = newData;
 			} else if (route === 'requestVariantData') {
-				newState.variantData = newData;
+				newState.variantData = [...newData];
 			}
 
 			if (

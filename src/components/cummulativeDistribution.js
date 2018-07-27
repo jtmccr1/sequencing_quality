@@ -2,6 +2,8 @@ import React from 'react';
 import { select } from 'd3-selection';
 import { calcScales, drawAxes } from '../utils/commonFunctions';
 import { chartTitleCSS } from '../utils/commonStyles';
+import { line, curveStep, curveLinear } from 'd3-shape';
+const cdf = require('cumulative-distribution-function');
 
 export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 	/* data is array of channelData */
@@ -14,20 +16,51 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 			samples.push(element.Sample);
 		}
 	});
-	svg.selectAll('.cirlce').remove();
+	//make an arrary of arrays of frequencies
+	var sampleFrequencies = [];
+	samples.forEach(sample => {
+		var sampleDataPoint = [];
+		data.forEach(element => {
+			if (element.Sample === sample) {
+				sampleDataPoint.push(element.freq);
+			}
+		});
+		sampleFrequencies.push(sampleDataPoint);
+	});
+
+	//make a cdf function for each sample arrary and add {cdf: freq:} object for each point for each sample
+	var samplesCdfData = [];
+	for (var i = 0; i < sampleFrequencies.length; i++) {
+		var sample = sampleFrequencies[i];
+		var samplecdf = cdf(sample);
+		var sampleCdfValues = [];
+		for (var j = 0; j < sample.length; j++) {
+			sampleCdfValues.push({ cdf: samplecdf(sample[j]), freq: sample[j] });
+		}
+		sampleCdfValues.sort(function(a, b) {
+			return a.freq > b.freq ? 1 : b.freq > a.freq ? -1 : 0;
+		});
+		samplesCdfData.push(sampleCdfValues);
+	}
+	//https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
+
+	const makeLinePath = line()
+		.x(d => scales.x(d.freq))
+		.y(d => scales.y(d.cdf))
+		.curve(curveLinear);
+	// .curve(curveCatmullRom.alpha(0.3));
+
+	svg.selectAll('.line').remove();
 	try {
-		svg.selectAll('circle')
-			.data(data)
+		console.log(samplesCdfData);
+		svg.selectAll('.line')
+			.data(samplesCdfData)
 			.enter()
-			.append('circle')
-			.attr('cx', function(d) {
-				return scales.x(d.concat_pos);
-			})
-			.attr('cy', function(d) {
-				return scales.y(d.freq);
-			})
-			.attr('r', 2)
-			.attr('fill', d => colours[samples.indexOf(d.Sample)]);
+			.append('path')
+			.attr('class', 'line')
+			.attr('fill', 'none')
+			.attr('stroke', (d, i) => colours[i])
+			.attr('d', makeLinePath);
 	} catch (err) {
 		console.log('d3 spark lines error', err);
 	}
@@ -43,7 +76,7 @@ const calcChartGeom = DOMRect => ({
 	spaceTop: 10,
 });
 
-class VariantPlot extends React.Component {
+class CummulativeDistribution extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { chartGeom: {} };
@@ -53,7 +86,7 @@ class VariantPlot extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-		newState.scales = calcScales(newState.chartGeom, 14000, 0.5);
+		newState.scales = calcScales(newState.chartGeom, 1, 1);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
 		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.variantData, this.props.colours);
 		this.setState(newState);
@@ -80,4 +113,4 @@ class VariantPlot extends React.Component {
 	}
 }
 
-export default VariantPlot;
+export default CummulativeDistribution;
