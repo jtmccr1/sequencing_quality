@@ -6,7 +6,7 @@ import { channelColours } from '../utils/commonStyles';
 import CummulativeDistribution from './cummulativeDistribution';
 
 const panelContainer = css({
-	width: 'calc(100% - 30px)',
+	width: 'calc(100% - 350px)',
 	height: '350px' /* adjusting these will also adjust the graphs */,
 	minHeight: '350px',
 	margin: '10px 10px 10px 10px',
@@ -32,19 +32,19 @@ class Summary extends React.Component {
 				<div {...panelTitle}>Sequence Overview</div>
 				<div {...flexRow}>
 					<CoveragePlot
-						style={{ width: '35%', margin: 'auto', height: '100%' }}
+						style={{ width: '30%', margin: 'auto', height: '100%' }}
 						title={'Coverage'}
 						coverageData={this.props.coverageData}
 						colours={channelColours}
 					/>
 					<VariantPlot
-						style={{ width: '35%', margin: 'auto', height: '100%' }}
+						style={{ width: '30%', margin: 'auto', height: '100%' }}
 						title={'Frequency'}
 						variantData={this.props.variantData}
 						colours={channelColours}
 					/>
 					<CummulativeDistribution
-						style={{ width: '35%', margin: 'auto', height: '100%' }}
+						style={{ width: '30%', margin: 'auto', height: '100%' }}
 						title={'CDF of variant frequencies'}
 						variantData={this.props.variantData}
 						colours={channelColours}
