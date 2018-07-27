@@ -44,6 +44,29 @@ export const calcScales = (chartGeom, maxX, maxY) => {
 			.range([chartGeom.height - chartGeom.spaceBottom, chartGeom.spaceTop]),
 	};
 };
+
+export const calcScalesYlog = (chartGeom, maxX, maxY) => {
+	return {
+		x: scaleLinear()
+			.domain([0, maxX])
+			.range([chartGeom.spaceLeft, chartGeom.width - chartGeom.spaceRight]),
+		y: scaleLog()
+			.domain([0.00001, maxY])
+			.range([chartGeom.height - chartGeom.spaceBottom, chartGeom.spaceTop]),
+	};
+};
+
+export const calcScalesXlog = (chartGeom, maxX, maxY) => {
+	return {
+		x: scaleLog()
+			.domain([0.00001, maxX])
+			.range([chartGeom.spaceLeft, chartGeom.width - chartGeom.spaceRight]),
+		y: scaleLinear()
+			.domain([0, maxY])
+			.range([chartGeom.height - chartGeom.spaceBottom, chartGeom.spaceTop]),
+	};
+};
+
 export const getMaxPosition = data => {
 	return 1400;
 };

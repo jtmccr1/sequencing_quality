@@ -1,6 +1,6 @@
 import React from 'react';
 import { select } from 'd3-selection';
-import { calcScales, drawAxes } from '../utils/commonFunctions';
+import { calcScalesXlog, drawAxes } from '../utils/commonFunctions';
 import { chartTitleCSS } from '../utils/commonStyles';
 import { line, curveStep, curveLinear } from 'd3-shape';
 const cdf = require('cumulative-distribution-function');
@@ -52,7 +52,6 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 
 	svg.selectAll('.line').remove();
 	try {
-		console.log(samplesCdfData);
 		svg.selectAll('.line')
 			.data(samplesCdfData)
 			.enter()
@@ -86,7 +85,7 @@ class CummulativeDistribution extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-		newState.scales = calcScales(newState.chartGeom, 1, 1);
+		newState.scales = calcScalesXlog(newState.chartGeom, 1, 1);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
 		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.variantData, this.props.colours);
 		this.setState(newState);

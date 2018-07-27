@@ -1,6 +1,6 @@
 import React from 'react';
 import { select } from 'd3-selection';
-import { calcScales, drawAxes } from '../utils/commonFunctions';
+import { calcScalesYlog, drawAxes } from '../utils/commonFunctions';
 import { chartTitleCSS } from '../utils/commonStyles';
 
 export const drawCurve = (svg, chartGeom, scales, data, colours) => {
@@ -53,7 +53,7 @@ class VariantPlot extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-		newState.scales = calcScales(newState.chartGeom, 14000, 0.5);
+		newState.scales = calcScalesYlog(newState.chartGeom, 14000, 0.5);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
 		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.variantData, this.props.colours);
 		this.setState(newState);
