@@ -48,7 +48,7 @@ class CoveragePlot extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-		newState.scales = calcScales(newState.chartGeom, 14000, 1000);
+		newState.scales = calcScales(newState.chartGeom, this.props.coverageData, 'concat_pos', 'coverage', ['logY']);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
 		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.coverageData, this.props.colours);
 		this.setState(newState);

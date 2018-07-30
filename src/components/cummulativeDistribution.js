@@ -1,15 +1,11 @@
 import React from 'react';
 import { select } from 'd3-selection';
-import { calcScalesXlog, drawAxes } from '../utils/commonFunctions';
+import { calcScales, drawAxes } from '../utils/commonFunctions';
 import { chartTitleCSS } from '../utils/commonStyles';
 import { line, curveStep, curveLinear } from 'd3-shape';
 const cdf = require('cumulative-distribution-function');
 
-export const drawCurve = (svg, chartGeom, scales, data, colours) => {
-	/* data is array of channelData */
-	/* https://stackoverflow.com/questions/8689498/drawing-multiple-lines-in-d3-js */
-
-	// .curve(curveCatmullRom.alpha(0.3));
+export const calcCDF = data => {
 	var samples = [];
 	data.forEach(element => {
 		if (samples.indexOf(element.Sample) === -1) {
@@ -42,6 +38,15 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 		});
 		samplesCdfData.push(sampleCdfValues);
 	}
+	return samplesCdfData;
+};
+
+export const drawCurve = (svg, chartGeom, scales, data, colours) => {
+	/* data is array of channelData */
+	/* https://stackoverflow.com/questions/8689498/drawing-multiple-lines-in-d3-js */
+
+	// .curve(curveCatmullRom.alpha(0.3));
+
 	//https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
 
 	const makeLinePath = line()
@@ -53,7 +58,7 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 	svg.selectAll('.line').remove();
 	try {
 		svg.selectAll('.line')
-			.data(samplesCdfData)
+			.data(data)
 			.enter()
 			.append('path')
 			.attr('class', 'line')
@@ -85,9 +90,11 @@ class CummulativeDistribution extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-		newState.scales = calcScalesXlog(newState.chartGeom, 1, 1);
+
+		const cdfData = calcCDF(this.props.variantData);
+		newState.scales = calcScales(newState.chartGeom, cdfData, 'freq', 'cdf', ['logX']);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
-		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.variantData, this.props.colours);
+		drawCurve(newState.SVG, newState.chartGeom, newState.scales, cdfData, this.props.colours);
 		this.setState(newState);
 	}
 

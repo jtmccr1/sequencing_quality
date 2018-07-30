@@ -24,3 +24,6 @@ yarn-error.log*
 
 # files that aren't used
 /src/unused
+
+# Data
+/data
