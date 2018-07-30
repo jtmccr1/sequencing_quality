@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { css } from 'glamor';
-import logo from '../images/logo.svg';
+import logo from '../images/hive_logo.jpeg';
 import '../styles/App.css';
 import { getData } from '../utils/getData';
 import Summary from './Summary';
@@ -67,7 +67,7 @@ class App extends Component {
 			<div className="App">
 				<header className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
-					<h1 className="App-title">Sequence Overview</h1>
+					<h1 className="App-title">2014-2015 HIVE overview</h1>
 				</header>
 
 				{this.state.data ? (
@@ -79,7 +79,10 @@ class App extends Component {
 						/>
 					</div>
 				) : (
-					<h1>Loading data</h1>
+					<div>
+						<h1>Loading data</h1>
+						<div class="loader" />
+					</div>
 				)}
 			</div>
 		);

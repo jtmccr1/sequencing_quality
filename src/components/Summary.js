@@ -4,11 +4,12 @@ import CoveragePlot from './coveragePlot';
 import VariantPlot from './variantPlot';
 import { channelColours } from '../utils/commonStyles';
 import CummulativeDistribution from './cummulativeDistribution';
+import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
 
 const panelContainer = css({
-	width: 'calc(100% - 350px)',
-	height: '350px' /* adjusting these will also adjust the graphs */,
-	minHeight: '350px',
+	width: 'calc(100%-20px)',
+	height: '500' /* adjusting these will also adjust the graphs */,
+	minHeight: '500px',
 	margin: '10px 10px 10px 10px',
 });
 
@@ -28,29 +29,42 @@ const flexRow = css({
 class Summary extends React.Component {
 	render() {
 		return (
-			<div {...panelContainer}>
-				<div {...panelTitle} />
-				<div {...flexRow}>
-					<CoveragePlot
-						style={{ width: '35%', margin: 'auto', height: '100%' }}
-						title={'Coverage'}
-						coverageData={this.props.coverageData}
-						colours={channelColours}
-						genomeAnnotation={this.props.genomeAnnotation}
-					/>
-					<VariantPlot
-						style={{ width: '35%', margin: 'auto', height: '100%' }}
-						title={'Frequency'}
-						variantData={this.props.variantData}
-						colours={channelColours}
-						genomeAnnotation={this.props.genomeAnnotation}
-					/>
-					<CummulativeDistribution
-						style={{ width: '35%', margin: 'auto', height: '100%' }}
-						title={'CDF of variant frequencies'}
-						variantData={this.props.variantData}
-						colours={channelColours}
-					/>
+			<div>
+				<div {...panelContainer}>
+					<div {...panelTitle} />
+					<div {...flexRow}>
+						<FrequencyAndSegmentSelection
+							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							title={'Filter data'}
+							genomeAnnotation={this.props.genomeAnnotation}
+						/>
+						<CoveragePlot
+							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							title={'Coverage'}
+							coverageData={this.props.coverageData}
+							colours={channelColours}
+							genomeAnnotation={this.props.genomeAnnotation}
+						/>
+						<VariantPlot
+							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							title={'Frequency'}
+							variantData={this.props.variantData}
+							colours={channelColours}
+							genomeAnnotation={this.props.genomeAnnotation}
+						/>
+						<CummulativeDistribution
+							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							title={'CDF of variant frequencies'}
+							variantData={this.props.variantData}
+							colours={channelColours}
+						/>
+					</div>
+				</div>
+				<div {...panelContainer}>
+					<h1> Sample and run selectors</h1>
+				</div>
+				<div>
+					<h1> Variant Table</h1>
 				</div>
 			</div>
 		);
