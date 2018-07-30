@@ -12,7 +12,7 @@ const panelContainer = css({
 	margin: '10px 10px 10px 10px',
 });
 
-export const panelTitle = css({
+export const panelTitle = css({ 
 	fontWeight: 'bold',
 	fontSize: '1.3em',
 	paddingLeft: '20px',
@@ -29,22 +29,22 @@ class Summary extends React.Component {
 	render() {
 		return (
 			<div {...panelContainer}>
-				<div {...panelTitle}>Sequence Overview</div>
+				<div {...panelTitle}></div>
 				<div {...flexRow}>
 					<CoveragePlot
-						style={{ width: '30%', margin: 'auto', height: '100%' }}
+						style={{ width: '35%', margin: 'auto', height: '100%' }}
 						title={'Coverage'}
 						coverageData={this.props.coverageData}
 						colours={channelColours}
 					/>
 					<VariantPlot
-						style={{ width: '30%', margin: 'auto', height: '100%' }}
+						style={{ width: '35%', margin: 'auto', height: '100%' }}
 						title={'Frequency'}
 						variantData={this.props.variantData}
 						colours={channelColours}
 					/>
 					<CummulativeDistribution
-						style={{ width: '30%', margin: 'auto', height: '100%' }}
+						style={{ width: '35%', margin: 'auto', height: '100%' }}
 						title={'CDF of variant frequencies'}
 						variantData={this.props.variantData}
 						colours={channelColours}

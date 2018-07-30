@@ -34,13 +34,27 @@ export const drawAxes = (svg, chartGeom, scales, numTicks = { x: 5, y: 5 }) => {
 	drawYAxis(svg, chartGeom, scales, numTicks.y);
 };
 
-export const calcScales = (chartGeom, maxX, maxY) => {
+export const calcScales = (chartGeom, data, xAxis, yAxis) => {
+	// Needs to work for both array of data to plot and array of arrays of data to plot
+	var x = [];
+	var y = [];
+	data.forEach(element => {
+		x.push(element[xAxis]);
+		y.push(element[yAxis]);
+	});
+
+	const maxX = Math.max(...x);
+	const minX = Math.min(...x);
+
+	const maxY = Math.max(...y);
+	const minY = Math.min(...y);
+
 	return {
 		x: scaleLinear()
-			.domain([0, maxX])
+			.domain([minX, maxX])
 			.range([chartGeom.spaceLeft, chartGeom.width - chartGeom.spaceRight]),
 		y: scaleLinear()
-			.domain([0, maxY])
+			.domain([minY, maxY])
 			.range([chartGeom.height - chartGeom.spaceBottom, chartGeom.spaceTop]),
 	};
 };

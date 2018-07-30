@@ -18,8 +18,9 @@
 	"scripts": {
 		"start": "react-scripts start",
 		"build": "react-scripts build",
-		"test": "mocha --require babel-core/register ",
-		"eject": "react-scripts eject"
+		"test": "mocha --require babel-core/register ./src/test/* ",
+		"eject": "react-scripts eject",
+		"compile": "babel src --out-dir .compiled --source-maps --watch"
 	},
 	"devDependencies": {
 		"babel-core": "^6.26.3",

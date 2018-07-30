@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var parseData = require('../src/utils/parseData');
+import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 
 describe('Parse Data', function() {
 	beforeEach(function() {
@@ -128,7 +128,7 @@ describe('Parse Data', function() {
 			},
 		];
 
-		var result = parseData.parseVariantData(this.testVariantData);
+		var result = parseVariantData(this.testVariantData);
 		expect(result).to.deep.equal(answer);
 	});
 
@@ -143,7 +143,7 @@ describe('Parse Data', function() {
 				pos: 24,
 			},
 		];
-		result = parseData.parseCoverageData(this.testVariantData);
+		var result = parseCoverageData(this.testVariantData);
 		expect(result).to.deep.equal(answer);
 	});
 
@@ -190,7 +190,7 @@ describe('Parse Data', function() {
 				threePrimeUtrEnd: 25,
 			},
 		];
-		result = parseData.parseGenomeAnnotation(this.testGenomeData);
+		var result = parseGenomeAnnotation(this.testGenomeData);
 		expect(result).to.deep.equal(answer);
 	});
 });
