@@ -19,7 +19,7 @@ export const drawXAxis = (svg, chartGeom, scales, numTicks) => {
 		.style('font-size', '12px')
 		.call(axisBottom(scales.x).ticks(numTicks.x));
 };
-export const drawYAxis = (svg, chartGeom, scales, numTicks) => {
+export const drawYAxis = (svg, chartGeom, scales, numTicks = { x: 5, y: 5 }) => {
 	removeYAxis(svg);
 	svg.append('g')
 		.attr('class', 'y axis')
@@ -79,62 +79,37 @@ export const calcScales = (chartGeom, data, xAxis, yAxis, log = []) => {
 	return scales;
 };
 
-const drawGenomeAnnotation = (svg, chartGeom, scales, annotation) => {
+export const drawGenomeAnnotation = (svg, chartGeom, scales, annotation) => {
 	// svg.selectAll(".gene").remove(); /* only added once, don't need to remove what's not there */
 
-	const primers = annotation.primers;
-	const primerNames = Object.keys(primers);
-	const primerHeight = 8;
-	const primerRoof = chartGeom.height - chartGeom.spaceBottom + 20; /* all primers & genes below this */
-
-	const primersSel = svg
-		.selectAll('.primer')
-		.data(primerNames)
-		.enter()
-		.append('g');
-
-	primersSel
-		.append('rect')
-		.attr('class', 'primer')
-		.attr('x', name => scales.x(primers[name].forward[0]))
-		.attr('y', (d, i) => (i % 2 ? primerRoof : primerRoof + primerHeight))
-		.attr('width', name => scales.x(primers[name]['reverse'][1]) - scales.x(primers[name].forward[0]))
-		.attr('height', primerHeight)
-		.style('fill', 'lightgray')
-		.style('stroke', 'none');
-
-	const geneHeight = 15;
-	const geneRoof = primerRoof + 2 * primerHeight + 5;
-	const calcYOfGene = name => (genes[name].strand === 1 ? geneRoof : geneRoof + geneHeight);
+	const geneHeight = 20;
+	const geneRoof = chartGeom.height - chartGeom.spaceBottom; /* all primers & genes below this */
 
 	const genes = annotation.genes;
-	const geneNames = Object.keys(annotation.genes);
-
-	const genesSel = svg
-		.selectAll('.gene')
-		.data(geneNames)
+	///const geneNames = Object.keys(annotation.genes);
+	removeXAxis(svg);
+	svg.selectAll('.rect')
+		.data(annotation)
 		.enter()
-		.append('g');
-
-	genesSel
 		.append('rect')
-		.attr('class', 'gene')
-		.attr('x', name => scales.x(genes[name].start))
-		.attr('y', calcYOfGene)
-		.attr('width', name => scales.x(genes[name].end) - scales.x(genes[name].start))
+		.attr('x', d => scales.x(d.ORFstart))
+		.attr('y', d => (d.verticleOffSet === 0 ? geneRoof : geneHeight + geneRoof))
+		.attr('width', d => scales.x(d.ORFend) - scales.x(d.ORFstart))
 		.attr('height', geneHeight)
 		.style('fill', 'none')
 		.style('stroke', 'gray');
 
 	/* https://bl.ocks.org/emmasaunders/0016ee0a2cab25a643ee9bd4855d3464 for text attr values */
-	genesSel
+	svg.selectAll('.text')
+		.data(annotation)
+		.enter()
 		.append('text')
-		.attr('x', name => scales.x(genes[name].start) + (scales.x(genes[name].end) - scales.x(genes[name].start)) / 2)
-		.attr('y', calcYOfGene)
-		.attr('dy', '2px') /* positive values bump down text */
+		.attr('x', d => scales.x(d.ORFstart) + (scales.x(d.ORFend) - scales.x(d.ORFstart)) / 2)
+		.attr('y', d => (d.verticleOffSet === 0 ? geneRoof : geneHeight + geneRoof)) //small fragmens under
+		.attr('dy', '5px') /* positive values bump down text */
 		.attr('text-anchor', 'middle') /* centered horizontally */
-		.attr('font-size', '14px')
+		.attr('font-size', '10px')
 		.attr('alignment-baseline', 'hanging') /* i.e. y value specifies top of text */
 		.style('fill', 'black')
-		.text(name => (name.length > 3 ? '' : name));
+		.text(d => d.name);
 };
