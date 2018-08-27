@@ -17,6 +17,13 @@
 			"name": "Launch Current File",
 			"program": "${file}",
 			"outFiles": ["${workspaceRoot}/.compiled/**/*.js"]
+		},
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "Launch Chrome against localhost",
+			"url": "http://localhost:3000",
+			"webRoot": "${workspaceFolder}"
 		}
 	]
 }

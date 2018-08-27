@@ -13,10 +13,14 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 		.curve(curveLinear);
 	// .curve(curveCatmullRom.alpha(0.3));
 
+	let dataArray = [];
+	data.forEach(element => {
+		dataArray.push(element.data);
+	});
 	svg.selectAll('.line').remove();
 	try {
 		svg.selectAll('.line')
-			.data(data)
+			.data(dataArray)
 			.enter()
 			.append('path')
 			.attr('class', 'line')
@@ -48,7 +52,15 @@ class CoveragePlot extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-		newState.scales = calcScales(newState.chartGeom, this.props.coverageData, 'concat_pos', 'coverage', ['logY']);
+		let extremes = {
+			concat_pos: [],
+			coverage: [],
+		};
+		this.props.coverageData.forEach(sample => {
+			extremes.concat_pos.push(...sample.extremes.concat_pos);
+			extremes.coverage.push(...sample.extremes.coverage);
+		});
+		newState.scales = calcScales(newState.chartGeom, extremes, 'concat_pos', 'coverage', ['logY']);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
 		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.coverageData, this.props.colours);
 		drawGenomeAnnotation(newState.SVG, newState.chartGeom, newState.scales, this.props.genomeAnnotation);

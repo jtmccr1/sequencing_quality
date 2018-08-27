@@ -10,14 +10,19 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 	// .curve(curveCatmullRom.alpha(0.3));
 	var samples = [];
 	data.forEach(element => {
-		if (samples.indexOf(element.Sample) === -1) {
-			samples.push(element.Sample);
+		if (samples.indexOf(element.sample) === -1) {
+			samples.push(element.sample);
 		}
 	});
+	let dataArray = [];
+	data.forEach(element => {
+		dataArray.push(element.data);
+	});
+
 	svg.selectAll('.cirlce').remove();
 	try {
 		svg.selectAll('circle')
-			.data(data)
+			.data(dataArray)
 			.enter()
 			.append('circle')
 			.attr('cx', function(d) {
@@ -27,7 +32,7 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 				return scales.y(d.freq);
 			})
 			.attr('r', 2)
-			.attr('fill', d => colours[samples.indexOf(d.Sample) % colours.length]);
+			.attr('fill', d => colours[samples.indexOf(d.sample) % colours.length]);
 	} catch (err) {
 		console.log('d3 spark lines error', err);
 	}
@@ -53,8 +58,15 @@ class VariantPlot extends React.Component {
 			SVG: select(this.DOMref),
 			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
 		};
-
-		newState.scales = calcScales(newState.chartGeom, this.props.variantData, 'concat_pos', 'freq', ['logY']);
+		let extremes = {
+			concat_pos: [],
+			freq: [],
+		};
+		this.props.variantData.forEach(sample => {
+			extremes.concat_pos.push(...sample.extremes.concat_pos);
+			extremes.freq.push(...sample.extremes.freq);
+		});
+		newState.scales = calcScales(newState.chartGeom, extremes, 'concat_pos', 'freq', ['logY']);
 		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
 		drawCurve(newState.SVG, newState.chartGeom, newState.scales, this.props.variantData, this.props.colours);
 		drawGenomeAnnotation(newState.SVG, newState.chartGeom, newState.scales, this.props.genomeAnnotation);

@@ -6,7 +6,7 @@ import { getData } from '../utils/getData';
 import Summary from './Summary';
 import { channelColours } from '../utils/commonStyles';
 import VariantTable from './VariantTable';
-
+import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 const panelContainer = css({
 	width: 'calc(100% - 30px)',
 	height: '350px' /* adjusting these will also adjust the graphs */,
@@ -14,6 +14,23 @@ const panelContainer = css({
 	margin: '10px 10px 10px 10px',
 });
 
+const startingSamples = [
+	{
+		run: 'HK_1',
+		sample: 'HS1345_B',
+	},
+	{
+		run: 'HK_1',
+		sample: 'HS1341_B',
+	},
+	{
+		run: 'HK_1',
+		sample: 'HS1357_B',
+	},
+];
+
+const data = getData(`${startingSamples[0].run}/${startingSamples[0].sample}.removed.filtered.json`, parseVariantData);
+console.log(data);
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -22,45 +39,39 @@ class App extends Component {
 			coverageData: [],
 			genomeAnnotation: [],
 			variantData: [],
+			samples: startingSamples,
 		};
-		this.addData = (newData, route) => {
-			this.setState(this.calcNewState(newData, route));
+		this.addData = newData => {
+			this.setState(this.calcNewState(newData));
+		};
+		this.addGenome = newData => {
+			let newState = this.state;
+			newState['genomeAnnotation'] = parseGenomeAnnotation(newData);
+			this.setState(newState);
 		};
 	}
 
-	calcNewState(newData, route) {
+	calcNewState(newData, key) {
 		console.time('calcNewState');
-		var newState = this.state;
+		let newState = this.state;
 		if (!this.state.data) {
 			/* must initialise! */
-
-			if (route === 'requestCoverageData') {
-				newState.coverageData = newData;
-			} else if (route === 'requestGenomeAnnotation') {
-				newState.genomeAnnotation = newData;
-			} else if (route === 'requestVariantData') {
-				newState.variantData = [...newData];
-			}
-
-			if (
-				(newState.variantData.length > 0) &
-				(newState.coverageData.length > 0) &
-				(newState.genomeAnnotation.length > 0)
-			) {
-				newState.data = true;
-			}
+			newState['variantData'].push(parseVariantData(newData));
+			newState['coverageData'].push(parseCoverageData(newData));
+			newState.data = true;
 		} else {
 			/* a data update */
 			newState.data = true;
-			newState.coverageData = newData;
+			newState['variantData'].push(parseVariantData(newData));
+			newState['coverageData'].push(parseCoverageData(newData));
 		}
 		console.timeEnd('calcNewState');
 		return newState;
 	}
 	componentDidMount() {
-		getData('requestGenomeAnnotation', this.addData);
-		getData('requestCoverageData', this.addData);
-		getData('requestVariantData', this.addData);
+		getData('/or.bed.json', this.addGenome);
+		//getData('requestCoverageData', this.addData);
+		getData(`${startingSamples[0].run}/${startingSamples[0].sample}.removed.filtered.json`, this.addData);
 	}
 
 	render() {

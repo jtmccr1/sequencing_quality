@@ -38,29 +38,10 @@ export const drawAxes = (svg, chartGeom, scales, numTicks = { x: 5, y: 5 }) => {
 export const calcScales = (chartGeom, data, xAxis, yAxis, log = []) => {
 	// Needs to work for both array of data to plot and array of arrays of data to plot
 
-	if (!Array.isArray(data[0])) {
-		var x = [];
-		var y = [];
-
-		data.forEach(element => {
-			x.push(element[xAxis]);
-			y.push(element[yAxis]);
-		});
-	} else {
-		var x = [];
-		var y = [];
-		data.forEach(sample => {
-			sample.forEach(element => {
-				x.push(element[xAxis]);
-				y.push(element[yAxis]);
-			});
-		});
-	}
-
-	const maxX = _.max(x);
-	const minX = _.min(x);
-	const maxY = _.max(y);
-	const minY = _.min(y);
+	const maxX = _.max(data[xAxis]);
+	const minX = _.min(data[xAxis]);
+	const maxY = _.max(data[yAxis]);
+	const minY = _.min(data[yAxis]);
 	var scales = {
 		x: scaleLinear()
 			.domain([minX, maxX])

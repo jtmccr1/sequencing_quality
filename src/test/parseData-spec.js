@@ -103,30 +103,37 @@ describe('Parse Data', function() {
 	});
 
 	it('Get minor allele data', function() {
-		const answer = [
-			{
-				Sample: 'test_sample',
-				chr: 'PA',
-				nucleotide: 'T',
-				consensus: 'A',
-				pos: 24,
-				concat_pos: 4708,
+		const answer = {
+			sample: 'test_sample',
+			data: [
+				{
+					sample: 'test_sample',
+					chr: 'PA',
+					nucleotide: 'T',
+					consensus: 'A',
+					pos: 24,
+					concat_pos: 4708,
+					freq: 0.49,
+					count: 981,
+					coverage: 981,
+					mutationalClass: [
+						{
+							ORF: 'PA',
+							aminoAcidPos: 0,
+							classification: 'NonSynonymous',
+							codingPos: 0,
+							codonPos: 0,
+							consensusAA: 'M',
+							varAA: 'G',
+						},
+					],
+				},
+			],
+			extremes: {
 				freq: 0.49,
-				count: 981,
-				coverage: 981,
-				mutationalClass: [
-					{
-						ORF: 'PA',
-						aminoAcidPos: 0,
-						classification: 'NonSynonymous',
-						codingPos: 0,
-						codonPos: 0,
-						consensusAA: 'M',
-						varAA: 'G',
-					},
-				],
+				concat_pos: 4708,
 			},
-		];
+		};
 
 		const result = parseVariantData(this.testVariantData);
 		expect(result).to.deep.equal(answer);
