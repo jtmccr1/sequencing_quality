@@ -5,6 +5,7 @@ import '../styles/App.css';
 import { getData } from '../utils/getData';
 import Summary from './Summary';
 import { channelColours } from '../utils/commonStyles';
+import VariantTable from './VariantTable';
 
 const panelContainer = css({
 	width: 'calc(100% - 30px)',

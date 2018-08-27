@@ -1,32 +1,33 @@
 module.exports = {
 	parseVariantData(data) {
-		var parsedDataSet = [];
-		var sample = data.Sample;
+		const parsedDataSet = [];
+		const sample = data.Sample;
 		const genome = data.genome;
-		for (var i = 0; i < genome.length; i++) {
+		for (const segment of genome) {
 			//cycle through each segment
-			var chr = genome[i].chr;
-			for (var j = 0; j < genome[i].seq.length; j++) {
-				var consensus = genome[i].seq[j].consensus;
-				var coverage = genome[i].seq[j].coverage;
-				var concat_pos = genome[i].seq[j].concat_pos;
-				var pos = genome[i].seq[j].pos;
-				for (var key in genome[i].seq[j].alleles) {
-					var freq = genome[i].seq[j].alleles[key].freq;
-					if (freq < 0.5) {
-						var nt = genome[i].seq[j].alleles[key].nucleotide;
-						var count = genome[i].seq[j].alleles[key].count;
-						var datapoint = {
+			for (const loci of segment.seq) {
+				const consensus = loci.consensus;
+				const coverage = loci.coverage;
+				const concat_pos = loci.concat_pos;
+				const pos = loci.pos;
+				if (!Array.isArray(loci.alleles)) {
+					loci.alleles = Object.values(loci.alleles);
+				}
+				for (const allele of loci.alleles) {
+					if (allele.freq < 0.5) {
+						const nt = allele.nucleotide;
+						const count = allele.count;
+						const datapoint = {
 							Sample: sample,
-							chr: chr,
+							chr: segment.chr,
 							nucleotide: nt,
 							consensus: consensus,
 							pos: pos,
 							concat_pos: concat_pos,
-							freq: freq,
+							freq: allele.freq,
 							count: count,
 							coverage: coverage,
-							mutationalClass: genome[i].seq[j].alleles[key].mutationalClass,
+							mutationalClass: allele.mutationalClass,
 						};
 						parsedDataSet.push(datapoint);
 					}
@@ -35,21 +36,21 @@ module.exports = {
 		}
 		return parsedDataSet;
 	},
+
 	parseCoverageData(data) {
-		var parsedDataSet = [];
-		var sample = data.Sample;
+		const parsedDataSet = [];
+		const sample = data.Sample;
 		const genome = data.genome;
-		for (var i = 0; i < genome.length; i++) {
+		for (const segment of genome) {
 			//cycle through each segment
-			var chr = genome[i].chr;
-			for (var j = 0; j < genome[i].seq.length; j++) {
-				var consensus = genome[i].seq[j].consensus;
-				var coverage = genome[i].seq[j].coverage;
-				var concat_pos = genome[i].seq[j].concat_pos;
-				var pos = genome[i].seq[j].pos;
+			for (const loci of segment.seq) {
+				var consensus = loci.consensus;
+				var coverage = loci.coverage;
+				var concat_pos = loci.concat_pos;
+				var pos = loci.pos;
 				var datapoint = {
 					Sample: sample,
-					chr: chr,
+					chr: segment.chr,
 					concat_pos: concat_pos,
 					consensus: consensus,
 					coverage: coverage,
@@ -71,27 +72,24 @@ module.exports = {
 		var ORFboxes = [];
 		var cumSize = 0;
 		var offSet = 0;
-		for (var i = 0; i < dataset.length; i++) {
+		for (const segment of dataset) {
 			//cycle through each segment
-			var segment = dataset[i];
-			for (var j = 0; j < segment.ORF.length; j++) {
-				var name = dataset[i].ORF[j].name;
-				var ORF = dataset[i].ORF[j];
+			for (openReadingFrame of segment.ORF) {
+				var name = openReadingFrame.name;
 				var ORFsize = 0;
-				for (var k = 0; k < ORF.regions.length; k++) {
-					var region = ORF.regions[k];
+				for (const exon of openReadingFrame.regions) {
 					var geneBox = {
 						name: name,
-						ORFstart: region.start + cumSize,
-						ORFend: region.stop + cumSize,
+						ORFstart: exon.start + cumSize,
+						ORFend: exon.stop + cumSize,
 						verticleOffSet: offSet,
 						fivePrimeUtrStart: cumSize + ORFsize,
-						fivePrimeUtrEnd: region.start + cumSize,
-						threePrimeUtrStart: region.stop + cumSize,
+						fivePrimeUtrEnd: exon.start + cumSize,
+						threePrimeUtrStart: exon.stop + cumSize,
 						threePrimeUtrEnd: cumSize + segment.size,
 					};
 					ORFboxes.push(geneBox);
-					ORFsize = ORFsize + region.stop;
+					ORFsize = ORFsize + exon.stop;
 				}
 				offSet = offSet - 1;
 			}

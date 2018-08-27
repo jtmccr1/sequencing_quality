@@ -1,4 +1,4 @@
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 
 describe('Parse Data', function() {
@@ -128,7 +128,7 @@ describe('Parse Data', function() {
 			},
 		];
 
-		var result = parseVariantData(this.testVariantData);
+		const result = parseVariantData(this.testVariantData);
 		expect(result).to.deep.equal(answer);
 	});
 

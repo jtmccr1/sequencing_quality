@@ -27,7 +27,7 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 				return scales.y(d.freq);
 			})
 			.attr('r', 2)
-			.attr('fill', d => colours[samples.indexOf(d.Sample)]);
+			.attr('fill', d => colours[samples.indexOf(d.Sample) % colours.length]);
 	} catch (err) {
 		console.log('d3 spark lines error', err);
 	}

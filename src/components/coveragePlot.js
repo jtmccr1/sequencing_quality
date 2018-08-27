@@ -21,7 +21,7 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 			.append('path')
 			.attr('class', 'line')
 			.attr('fill', 'none')
-			.attr('stroke', (d, i) => colours[i])
+			.attr('stroke', (d, i) => colours[i % colours.length])
 			.attr('d', makeLinePath);
 	} catch (err) {
 		console.log('d3 spark lines error', err);

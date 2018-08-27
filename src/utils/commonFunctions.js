@@ -1,5 +1,6 @@
 import { scaleLinear, scaleLog } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
+import * as _ from 'lodash';
 const dataFont = 'Lato'; // should be centralised
 
 const removeXAxis = svg => {
@@ -40,6 +41,7 @@ export const calcScales = (chartGeom, data, xAxis, yAxis, log = []) => {
 	if (!Array.isArray(data[0])) {
 		var x = [];
 		var y = [];
+
 		data.forEach(element => {
 			x.push(element[xAxis]);
 			y.push(element[yAxis]);
@@ -54,10 +56,11 @@ export const calcScales = (chartGeom, data, xAxis, yAxis, log = []) => {
 			});
 		});
 	}
-	const maxX = Math.max(...x);
-	const minX = Math.min(...x);
-	const maxY = Math.max(...y);
-	const minY = Math.min(...y);
+
+	const maxX = _.max(x);
+	const minX = _.min(x);
+	const maxY = _.max(y);
+	const minY = _.min(y);
 	var scales = {
 		x: scaleLinear()
 			.domain([minX, maxX])
