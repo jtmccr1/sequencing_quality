@@ -29,8 +29,6 @@ const startingSamples = [
 	},
 ];
 
-const data = getData(`${startingSamples[0].run}/${startingSamples[0].sample}.removed.filtered.json`, parseVariantData);
-console.log(data);
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -71,7 +69,9 @@ class App extends Component {
 	componentDidMount() {
 		getData('/or.bed.json', this.addGenome);
 		//getData('requestCoverageData', this.addData);
-		getData(`${startingSamples[0].run}/${startingSamples[0].sample}.removed.filtered.json`, this.addData);
+		for (const sample of this.state.samples) {
+			getData(`${sample.run}/${sample.sample}.removed.filtered.json`, this.addData);
+		}
 	}
 
 	render() {
@@ -93,7 +93,7 @@ class App extends Component {
 				) : (
 					<div>
 						<h1>Loading data</h1>
-						<div class="loader" />
+						<div className="loader" />
 					</div>
 				)}
 			</div>

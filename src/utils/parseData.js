@@ -5,7 +5,6 @@ export function parseVariantData(data) {
 	const sample = data.Sample;
 	const genome = data.genome;
 	for (const segment of genome) {
-		console.log(segment.chr);
 		//cycle through each segment
 		for (const loci of segment.seq) {
 			const consensus = loci.consensus;

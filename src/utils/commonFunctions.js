@@ -30,7 +30,7 @@ export const drawYAxis = (svg, chartGeom, scales, numTicks = { x: 5, y: 5 }) => 
 		.call(axisLeft(scales.y).ticks(numTicks.y));
 };
 
-export const drawAxes = (svg, chartGeom, scales, numTicks = { x: 5, y: 5 }) => {
+export const drawAxes = (svg, chartGeom, scales, numTicks = { x: 5, y: 3 }) => {
 	drawXAxis(svg, chartGeom, scales, numTicks.x);
 	drawYAxis(svg, chartGeom, scales, numTicks.y);
 };

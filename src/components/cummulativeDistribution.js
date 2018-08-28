@@ -5,42 +5,6 @@ import { chartTitleCSS } from '../utils/commonStyles';
 import { line, curveStep, curveLinear } from 'd3-shape';
 const cdf = require('cumulative-distribution-function');
 
-export const calcCDF = data => {
-	var samples = [];
-	data.forEach(element => {
-		if (samples.indexOf(element.Sample) === -1) {
-			samples.push(element.Sample);
-		}
-	});
-	//make an arrary of arrays of frequencies
-	var sampleFrequencies = [];
-	samples.forEach(sample => {
-		var sampleDataPoint = [];
-		data.forEach(element => {
-			if (element.Sample === sample) {
-				sampleDataPoint.push(element.freq);
-			}
-		});
-		sampleFrequencies.push(sampleDataPoint);
-	});
-
-	//make a cdf function for each sample arrary and add {cdf: freq:} object for each point for each sample
-	var samplesCdfData = [];
-	for (var i = 0; i < sampleFrequencies.length; i++) {
-		var sample = sampleFrequencies[i];
-		var samplecdf = cdf(sample);
-		var sampleCdfValues = [];
-		for (var j = 0; j < sample.length; j++) {
-			sampleCdfValues.push({ cdf: samplecdf(sample[j]), freq: sample[j] });
-		}
-		sampleCdfValues.sort(function(a, b) {
-			return a.freq > b.freq ? 1 : b.freq > a.freq ? -1 : 0;
-		});
-		samplesCdfData.push(sampleCdfValues);
-	}
-	return samplesCdfData;
-};
-
 export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 	/* data is array of channelData */
 	/* https://stackoverflow.com/questions/8689498/drawing-multiple-lines-in-d3-js */
@@ -48,6 +12,15 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 	// .curve(curveCatmullRom.alpha(0.3));
 
 	//https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
+	let dataArray = [];
+	data.forEach(sample => {
+		const sampleCDF = cdf(sample.data.map(d => d.freq));
+		sample.data.forEach(allele => (allele.cdf = sampleCDF(allele.freq)));
+		sample.data.sort(function(a, b) {
+			return a.freq > b.freq ? 1 : b.freq > a.freq ? -1 : 0;
+		});
+		dataArray.push(sample.data);
+	});
 
 	const makeLinePath = line()
 		.x(d => scales.x(d.freq))
@@ -55,19 +28,17 @@ export const drawCurve = (svg, chartGeom, scales, data, colours) => {
 		.curve(curveLinear);
 	// .curve(curveCatmullRom.alpha(0.3));
 
-	svg.selectAll('.line').remove();
-	try {
-		svg.selectAll('.line')
-			.data(data)
-			.enter()
-			.append('path')
-			.attr('class', 'line')
-			.attr('fill', 'none')
-			.attr('stroke', (d, i) => colours[i % colours.length])
-			.attr('d', makeLinePath);
-	} catch (err) {
-		console.log('d3 spark lines error', err);
-	}
+	svg.selectAll('path').remove();
+
+	svg.selectAll('path')
+		.data(dataArray)
+		.enter()
+		.append('path');
+	svg.selectAll('path')
+		.attr('class', 'line')
+		.attr('fill', 'none')
+		.attr('stroke', (d, i) => colours[i % colours.length])
+		.attr('d', makeLinePath);
 };
 
 /* given the DOM dimensions of the chart container, calculate the chart geometry (used by the SVG & D3) */
@@ -84,18 +55,37 @@ class CummulativeDistribution extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { chartGeom: {} };
+		this.drawPlot = this.drawPlot.bind(this);
+		this.setGeom = this.setGeom.bind(this);
+	}
+	drawPlot() {
+		const node = this.node;
+		let extremes = {
+			freq: [],
+			cdf: [0, 1],
+		};
+		this.props.variantData.forEach(sample => {
+			extremes.freq.push(...sample.extremes.freq);
+		});
+		const svg = select(node);
+		const dimensions =
+			Object.keys(this.state.chartGeom).length > 0
+				? this.state
+				: { chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()) };
+
+		const scales = calcScales(dimensions.chartGeom, extremes, 'freq', 'cdf', ['logX']);
+		drawAxes(svg, dimensions.chartGeom, scales);
+		drawCurve(svg, dimensions.chartGeom, scales, this.props.variantData, this.props.colours);
+	}
+	setGeom() {
+		this.setState({ chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()) });
 	}
 	componentDidMount() {
-		const newState = {
-			SVG: select(this.DOMref),
-			chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()),
-		};
-
-		const cdfData = calcCDF(this.props.variantData);
-		newState.scales = calcScales(newState.chartGeom, cdfData, 'freq', 'cdf', ['logX']);
-		drawAxes(newState.SVG, newState.chartGeom, newState.scales);
-		drawCurve(newState.SVG, newState.chartGeom, newState.scales, cdfData, this.props.colours);
-		this.setState(newState);
+		this.setGeom();
+		this.drawPlot();
+	}
+	componentDidUpdate() {
+		this.drawPlot();
 	}
 
 	render() {
@@ -108,9 +98,7 @@ class CummulativeDistribution extends React.Component {
 			>
 				<div {...chartTitleCSS}>{this.props.title}</div>
 				<svg
-					ref={r => {
-						this.DOMref = r;
-					}}
+					ref={node => (this.node = node)}
 					height={this.state.chartGeom.height || 0}
 					width={this.state.chartGeom.width || 0}
 				/>
