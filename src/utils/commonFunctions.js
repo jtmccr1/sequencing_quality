@@ -64,7 +64,7 @@ export const calcScales = (chartGeom, data, xAxis, yAxis, log = []) => {
 };
 
 export const drawGenomeAnnotation = (svg, chartGeom, scales, annotation) => {
-	// svg.selectAll(".gene").remove(); /* only added once, don't need to remove what's not there */
+	svg.selectAll('.gene').remove(); /* only added once, don't need to remove what's not there */
 
 	const geneHeight = 20;
 	const geneRoof = chartGeom.height - chartGeom.spaceBottom; /* all primers & genes below this */
@@ -80,6 +80,7 @@ export const drawGenomeAnnotation = (svg, chartGeom, scales, annotation) => {
 		.attr('y', d => (d.verticleOffSet === 0 ? geneRoof : geneHeight + geneRoof))
 		.attr('width', d => scales.x(d.ORFend) - scales.x(d.ORFstart))
 		.attr('height', geneHeight)
+		.attr('class', 'gene')
 		.style('fill', 'none')
 		.style('stroke', 'gray');
 
@@ -94,6 +95,7 @@ export const drawGenomeAnnotation = (svg, chartGeom, scales, annotation) => {
 		.attr('text-anchor', 'middle') /* centered horizontally */
 		.attr('font-size', '10px')
 		.attr('alignment-baseline', 'hanging') /* i.e. y value specifies top of text */
+		.attr('class', 'gene')
 		.style('fill', 'black')
 		.text(d => d.name);
 };
