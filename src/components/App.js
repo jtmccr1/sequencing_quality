@@ -115,15 +115,36 @@ class App extends Component {
 					coverageData: newCoverageData,
 				});
 			} else {
-				const newVariantData = this.state.variantData.forEach(sample => {
+				let newVariantData = this.state.variantData.slice();
+				newVariantData.forEach(sample => {
 					sample.data = sample.data.filter(
 						pos => pos.chr === ops.seg && pos.pos >= ops.pos[0] && pos.pos <= ops.pos[1]
 					);
+					sample.extremes = {
+						freq: [_.minBy(sample.data, a => a.freq).freq, _.maxBy(sample.data, a => a.freq).freq],
+						concat_pos: [
+							_.minBy(sample.data, a => a.concat_pos).concat_pos,
+							_.maxBy(sample.data, a => a.concat_pos).concat_pos,
+						],
+					};
+					return sample;
 				});
-				const newCoverageData = this.state.coverageData.forEach(sample => {
+				let newCoverageData = this.state.coverageData.slice();
+				newCoverageData.forEach(sample => {
 					sample.data = sample.data.filter(
 						pos => pos.chr === ops.seg && pos.pos >= ops.pos[0] && pos.pos <= ops.pos[1]
 					);
+					sample.extremes = {
+						coverage: [
+							_.minBy(sample.data, a => a.coverage).coverage,
+							_.maxBy(sample.data, a => a.coverage).coverage,
+						],
+						concat_pos: [
+							_.minBy(sample.data, a => a.concat_pos).concat_pos,
+							_.maxBy(sample.data, a => a.concat_pos).concat_pos,
+						],
+					};
+					return sample;
 				});
 				this.setState({
 					variantData: newVariantData,

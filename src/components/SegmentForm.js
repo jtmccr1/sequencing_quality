@@ -5,9 +5,16 @@ export default function Filters(props) {
 		if (evt.keyCode === 13) {
 			const value = evt.target.value;
 			const seg = value.split(':')[0];
-			const positions = value.split(':')[1];
+			let positions = value.split(':')[1];
 			if (!positions) {
 				props.filterPosition({ seg: seg });
+			} else {
+				positions = positions.split('-');
+				const positionsArray = positions.map(p => parseInt(p) - 1);
+				if (positionsArray.length < 2) {
+					positionsArray[1] = positionsArray[0];
+				}
+				props.filterPosition({ seg: seg, pos: positionsArray });
 			}
 			//const object = evt.target.value;
 			// console.log(object);
