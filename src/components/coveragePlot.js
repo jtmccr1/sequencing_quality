@@ -62,10 +62,10 @@ class CoveragePlot extends React.Component {
 			Object.keys(this.state.chartGeom).length > 0
 				? this.state
 				: { chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()) };
-		
+
 		const scales = calcScales(dimensions.chartGeom, extremes, 'concat_pos', 'coverage', ['logY']);
-		drawAxes(svg, dimensions.chartGeom, scales);
 		drawCurve(svg, dimensions.chartGeom, scales, this.props.coverageData, this.props.colours);
+		drawAxes(svg, dimensions.chartGeom, scales);
 		drawGenomeAnnotation(svg, dimensions.chartGeom, scales, this.props.genomeAnnotation);
 	}
 	setGeom() {

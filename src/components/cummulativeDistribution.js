@@ -74,8 +74,8 @@ class CummulativeDistribution extends React.Component {
 				: { chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()) };
 
 		const scales = calcScales(dimensions.chartGeom, extremes, 'freq', 'cdf', ['logX']);
-		drawAxes(svg, dimensions.chartGeom, scales);
 		drawCurve(svg, dimensions.chartGeom, scales, this.props.variantData, this.props.colours);
+		drawAxes(svg, dimensions.chartGeom, scales);
 	}
 	setGeom() {
 		this.setState({ chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()) });

@@ -1,13 +1,16 @@
 import React from 'react';
-
+import Filters from './SegmentForm';
+import FrequencyForm from './FrequencyForm';
 class FrequencyAndSegmentSelection extends React.Component {
 	render() {
 		return (
 			<div>
-				<h3>Selections will go here</h3>
-				<div> Select segments </div>
-				<div> Frequency cut off box</div>
-				<div> color by radio selection </div>
+				<Filters
+					updateDisplay={this.props.updateDisplay}
+					selectedPositions={this.props.selectedPositions}
+					filterPosition={this.props.filterPosition}
+				/>
+				<FrequencyForm />
 			</div>
 		);
 	}

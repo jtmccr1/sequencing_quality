@@ -27,6 +27,7 @@ const flexRow = css({
 });
 
 class Summary extends React.Component {
+	//Filtering here
 	render() {
 		return (
 			<div>
@@ -36,7 +37,9 @@ class Summary extends React.Component {
 						<FrequencyAndSegmentSelection
 							style={{ width: '25%', margin: 'auto', height: '100%' }}
 							title={'Filter data'}
-							genomeAnnotation={this.props.genomeAnnotation}
+							selectedPositions={this.props.selectedPositions}
+							filterPosition={this.props.filterPosition}
+							updateDisplay={this.props.updateDisplay}
 						/>
 						<CoveragePlot
 							style={{ width: '25%', margin: 'auto', height: '100%' }}
