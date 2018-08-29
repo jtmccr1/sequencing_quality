@@ -63,9 +63,6 @@ class Summary extends React.Component {
 						/>
 					</div>
 				</div>
-				<div {...panelContainer}>
-					<h1> Sample and run selectors</h1>
-				</div>
 			</div>
 		);
 	}

@@ -1,19 +1,13 @@
 import React, { Component } from 'react';
-import { css } from 'glamor';
+
 import logo from '../images/hive_logo.jpeg';
 import '../styles/App.css';
 import { getData } from '../utils/getData';
 import Summary from './Summary';
-import { channelColours } from '../utils/commonStyles';
-import VariantTable from './VariantTable';
+import MetaDataTable from './MetaDataTable';
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
-const panelContainer = css({
-	width: 'calc(100% - 30px)',
-	height: '350px' /* adjusting these will also adjust the graphs */,
-	minHeight: '350px',
-	margin: '10px 10px 10px 10px',
-});
+import { timingSafeEqual } from 'crypto';
 
 const startingSamples = [
 	{
@@ -40,6 +34,7 @@ class App extends Component {
 			variantData: [],
 			samples: startingSamples,
 			selectedPositions: '',
+			metaData: '',
 		};
 		this.addData = newData => {
 			this.setState(this.calcNewState(newData));
@@ -50,6 +45,11 @@ class App extends Component {
 		this.addGenome = newData => {
 			let newState = this.state;
 			newState['genomeAnnotation'] = parseGenomeAnnotation(newData);
+			this.setState(newState);
+		};
+		this.addMetaData = newData => {
+			let newState = this.state;
+			newState['metaData'] = newData;
 			this.setState(newState);
 		};
 	}
@@ -161,9 +161,10 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		getData('/or.bed.json', this.addGenome);
+		getData('/NY.OR.json', this.addGenome);
 		//getData('requestCoverageData', this.addData);
 		this.addSampleData();
+		getData('/SampleMetaData.json', this.addMetaData);
 	}
 
 	render() {
@@ -191,6 +192,9 @@ class App extends Component {
 						<div className="loader" />
 					</div>
 				)}
+				<div>
+					<MetaDataTable data={this.state.metaData} />
+				</div>
 			</div>
 		);
 	}
