@@ -16,21 +16,43 @@ const selectRowProp = {
 	onSelect: onSelectRow,
 	bgColor: 'gold',
 };
+const textColumn = {
+	dataAlign: 'left',
+	headerAlign: 'left',
+};
+const numberColumn = {
+	dataAlign: 'center',
+	headerAlign: 'center',
+};
 class MetaDataTable extends Component {
 	render() {
 		return (
 			<div>
 				<BootstrapTable data={this.props.data} selectRow={selectRowProp}>
-					<TableHeaderColumn isKey dataField="SPECID">
+					<TableHeaderColumn isKey dataField="SPECID" {...textColumn}>
 						Specimen
 					</TableHeaderColumn>
-					<TableHeaderColumn dataField="ENROLLID">Enrollee</TableHeaderColumn>
-					<TableHeaderColumn dataField="HOUSE_ID">House</TableHeaderColumn>
-					<TableHeaderColumn dataField="onset">Date of Symptom Onset</TableHeaderColumn>
-					<TableHeaderColumn dataField="collect">Date of Collection</TableHeaderColumn>
-					<TableHeaderColumn dataField="DPI">Days post onset</TableHeaderColumn>
-					<TableHeaderColumn dataField="gc_ul">Titer (gc/ul)</TableHeaderColumn>
-					<TableHeaderColumn dataField="vaccination">Vaccination Status</TableHeaderColumn>
+					<TableHeaderColumn dataField="ENROLLID" {...textColumn}>
+						Enrollee
+					</TableHeaderColumn>
+					<TableHeaderColumn dataField="HOUSE_ID" {...textColumn}>
+						House
+					</TableHeaderColumn>
+					<TableHeaderColumn dataField="onset" {...numberColumn}>
+						Date of Symptom Onset
+					</TableHeaderColumn>
+					<TableHeaderColumn dataField="collect" {...numberColumn}>
+						Date of Collection
+					</TableHeaderColumn>
+					<TableHeaderColumn dataField="DPI" {...numberColumn}>
+						Days post onset
+					</TableHeaderColumn>
+					<TableHeaderColumn dataField="gc_ul" {...numberColumn}>
+						Titer (gc/ul)
+					</TableHeaderColumn>
+					<TableHeaderColumn dataField="vaccination_status" {...textColumn}>
+						Vaccination Status
+					</TableHeaderColumn>
 				</BootstrapTable>
 			</div>
 		);
