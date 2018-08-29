@@ -26,27 +26,48 @@ const data2 = JSON.parse(fs.readFileSync(inputFile2, 'utf8'));
 // merge first level samples
 let concatSinglet = (l, r) => (Array.isArray(l) && Array.isArray(r) ? R.concat(l, r) : R.concat([l], [r]));
 let concatOrOne = (l, r) => (l === r ? r : concatSinglet(l, r));
-const grabAndGroup = R.curry(function(key, group, data) {
-	const helper = R.compose(
-		R.groupBy(loci => {
-			return loci[group];
-		}),
-		R.prop(key)
-	);
-	return helper(data);
+//Use R.mapObjIndexed check key if key
+const grabAndGroup = R.curry(function(desiredKey, group, value, key, data) {
+	const helper = R.groupBy(loci => {
+		return loci[group];
+	});
+
+	if (desiredKey === key) {
+		return helper(value);
+	} else {
+		return value;
+	}
 });
 
 const mergeDeepNoData = R.mergeDeepWith(concatOrOne);
 const firstgroup = grabAndGroup('genome', 'chr');
+const grabEnterandDoSomething = R.curry(function(desiredKey, something, value, key, data) {
+	if (desiredKey === key) {
+		return R.map(something, value);
+	} else {
+		return value;
+	}
+});
+
+const mergeArray = x => R.mergeDeepWith(concatOrOne, x[0], x[1]);
+const mergeSeg = grabEnterandDoSomething('genome', mergeArray);
 
 testF = R.pipe(
 	mergeDeepNoData,
-	firstgroup
+	R.mapObjIndexed(firstgroup),
+	R.mapObjIndexed(mergeSeg)
 ); //works as expected
-const test = R.mergeDeepWith(concatOrOne, data1, data2);
+const test = testF(data1, data2);
 //grab genome and merge by segment name
 
-const test3 = R.mergeDeepWith(concatOrOne, test2.HA[0], test2.HA[1]);
+//const test2 = R.mapObjIndexed(mergeSeg, test);
+////
+// Works to here merges samples then merges seq arrary - next to merge loci in array.
+//// I'm having to map at each level to keep the levels near the top.
+//// This will get teddious as we go down the levels - is it possible to do recursively map at first time than if key === genome enter group and go from here don't have to pass the whole object at each step of the pipe
+//// Need to handle case where there is only one entry - Can I do it at the end? need to handle where it was missing from
+//////
+
 //grab seq and group by loci pos
 byConcatPos = R.compose(
 	R.groupBy(loci => {
