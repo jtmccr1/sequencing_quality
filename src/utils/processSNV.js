@@ -26,7 +26,7 @@ const data2 = JSON.parse(fs.readFileSync(inputFile2, 'utf8'));
 // merge first level samples
 let concatSinglet = (l, r) => (Array.isArray(l) && Array.isArray(r) ? R.concat(l, r) : R.concat([l], [r]));
 let concatOrOne = (l, r) => (l === r ? r : concatSinglet(l, r));
-const grabAndGroup = function(key, group, data) {
+const grabAndGroup = R.curry(function(key, group, data) {
 	const helper = R.compose(
 		R.groupBy(loci => {
 			return loci[group];
@@ -34,19 +34,18 @@ const grabAndGroup = function(key, group, data) {
 		R.prop(key)
 	);
 	return helper(data);
-};
+});
 
+const mergeDeepNoData = R.mergeDeepWith(concatOrOne);
+const firstgroup = grabAndGroup('genome', 'chr');
+
+testF = R.pipe(
+	mergeDeepNoData,
+	firstgroup
+); //works as expected
 const test = R.mergeDeepWith(concatOrOne, data1, data2);
 //grab genome and merge by segment name
-const byGenomeSeg = R.compose(
-	R.groupBy(seg => {
-		return seg.chr;
-	}),
-	R.prop('genome')
-);
 
-const test2 = byGenomeSeg(test);
-//merge segment names
 const test3 = R.mergeDeepWith(concatOrOne, test2.HA[0], test2.HA[1]);
 //grab seq and group by loci pos
 byConcatPos = R.compose(
