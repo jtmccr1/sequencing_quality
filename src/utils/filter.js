@@ -21,7 +21,7 @@ fs.readFile(inputFile, 'utf8', function(err, data) {
 	const sample = JSON.parse(data);
 	sample.genome.forEach(segment => filterSegment(segment, coverage, mininumFrequency, maximumFrequency));
 
-	const filteredSample = JSON.stringify(sample, null, 4);
+	const filteredSample = JSON.stringify(sample, null);
 	fs.writeFile(outputFile, filteredSample, err => {
 		if (err) throw err;
 		console.log('Data written to file');
