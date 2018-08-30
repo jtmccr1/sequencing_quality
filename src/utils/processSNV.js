@@ -1,8 +1,6 @@
 const fs = require('fs');
-const expect = require('chai').expect;
-
 const R = require('ramda');
-
+import * from "ramda"
 // !!!!! Make sure ordering in allele freqeuncies is kept.
 
 // const args = process.argv.slice(2);
@@ -11,7 +9,7 @@ const R = require('ramda');
 // 	console.log('Useage:');
 // 	console.log('babel-node processSNV.js filtered1.json filtered2.json output.json');
 // 	console.log(
-// 		'This script takes in two json files and compares the frequency of alleles in both samples. The average is used but the individuals frequencies are kept.'
+// 		'This script takes in two json files and compares the frequency of alleles in both samples.'
 // 	);
 // 	process.exit(1);
 // }
@@ -53,14 +51,13 @@ const objectifyData = R.pipe(
 );
 
 const concatSinglet = (l, r) => (Array.isArray(l) && Array.isArray(r) ? R.concat(l, r) : R.concat([l], [r]));
-const concatOrOne = (l, r) => (l === r ? r : concatSinglet(l, r));
+const concatOrOne = (l, r) => (R.equals(l, r) ? r : concatSinglet(l, r));
 const mergeDeepNoData = R.mergeDeepWith(concatOrOne);
 
 const data1Objectified = objectifyData(data1);
 const data2Objectified = objectifyData(data2);
 
-const output = mergeDeepNoData(data1Objectified, data2Objectified);
-// works just need to handel equal mutational classification arrary in merge
+const output = mergeDeepNoData(data1, data2);
 // need to add empty positions were needed.
 
-//map over values and return for each a seq object
+
