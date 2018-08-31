@@ -1,5 +1,5 @@
 const fs = require('fs');
-import { filterSegment } from './filter';
+import { filterGenome } from './functions';
 
 const args = process.argv.slice(2);
 // Look for help
@@ -20,10 +20,9 @@ const maximumFrequency = parseFloat(args[4]);
 fs.readFile(inputFile, 'utf8', function(err, data) {
 	if (err) throw err; // we'll not consider error handling for now
 	const sample = JSON.parse(data);
-	sample.genome.forEach(segment => filterSegment(segment, coverage, mininumFrequency, maximumFrequency));
-
-	const filteredSample = JSON.stringify(sample, null);
-	fs.writeFile(outputFile, filteredSample, err => {
+	const filteredSample = filterGenome(sample, coverage, mininumFrequency, maximumFrequency);
+	const filteredSampleString = JSON.stringify(filteredSample, null);
+	fs.writeFile(outputFile, filteredSampleString, err => {
 		if (err) throw err;
 		console.log('Data written to file');
 	});

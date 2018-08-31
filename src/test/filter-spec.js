@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const _ = require('lodash');
-import { filterSegment } from '../utils/commandLine/functions';
+import { filterGenome } from '../utils/commandLine/functions';
 
 describe('Filter', function() {
 	it('filter coverage and frequency', function() {
@@ -9,66 +9,43 @@ describe('Filter', function() {
 			genome: [
 				{
 					chr: 'PA',
-					seq: [
-						{
-							alleles: {
-								A: {
-									count: 2930,
-									freq: 0.9996588195155237,
-									mutationalClass: [
-										{
-											ORF: 'PA',
-											aminoAcidPos: 0,
-											classification: 'Synonymous',
-											codingPos: 0,
-											codonPos: 0,
-											consensusAA: 'M',
-											varAA: 'M',
-										},
-										{
-											ORF: 'PA-X',
-											aminoAcidPos: 0,
-											classification: 'Synonymous',
-											codingPos: 0,
-											codonPos: 0,
-											consensusAA: 'M',
-											varAA: 'M',
-										},
-									],
-									nucleotide: 'A',
-								},
-								G: {
-									count: 1,
-									freq: 0.000341180484476288,
-									mutationalClass: [
-										{
-											ORF: 'PA',
-											aminoAcidPos: 0,
-											classification: 'Nonsynonymous',
-											codingPos: 0,
-											codonPos: 0,
-											consensusAA: 'M',
-											varAA: 'V',
-										},
-										{
-											ORF: 'PA-X',
-											aminoAcidPos: 0,
-											classification: 'Nonsynonymous',
-											codingPos: 0,
-											codonPos: 0,
-											consensusAA: 'M',
-											varAA: 'V',
-										},
-									],
-									nucleotide: 'G',
-								},
-							},
-							concat_pos: 4629,
-							consensus: 'A',
-							coverage: 2931,
-							pos: 10,
-						},
-					],
+					concat_pos: 4708,
+					consensus: 'A',
+					count: 990,
+					coverage: 1981,
+					freq: 0.51,
+					nucleotide: 'A',
+					pos: 24,
+				},
+				{
+					chr: 'PA',
+					concat_pos: 4708,
+					consensus: 'A',
+					count: 1981,
+					coverage: 981,
+					freq: 0.0001,
+					nucleotide: 'T',
+					pos: 24,
+				},
+				{
+					chr: 'HA',
+					concat_pos: 4708,
+					consensus: 'A',
+					count: 1990,
+					coverage: 981,
+					freq: 0.51,
+					nucleotide: 'A',
+					pos: 24,
+				},
+				{
+					chr: 'HA',
+					concat_pos: 4708,
+					consensus: 'A',
+					count: 981,
+					coverage: 1981,
+					freq: 0.01,
+					nucleotide: 'T',
+					pos: 24,
 				},
 			],
 		};
@@ -77,46 +54,28 @@ describe('Filter', function() {
 			genome: [
 				{
 					chr: 'PA',
-					seq: [
-						{
-							alleles: [
-								{
-									count: 2930,
-									freq: 0.9996588195155237,
-									mutationalClass: [
-										{
-											ORF: 'PA',
-											aminoAcidPos: 0,
-											classification: 'Synonymous',
-											codingPos: 0,
-											codonPos: 0,
-											consensusAA: 'M',
-											varAA: 'M',
-										},
-										{
-											ORF: 'PA-X',
-											aminoAcidPos: 0,
-											classification: 'Synonymous',
-											codingPos: 0,
-											codonPos: 0,
-											consensusAA: 'M',
-											varAA: 'M',
-										},
-									],
-									nucleotide: 'A',
-								},
-							],
-							concat_pos: 4629,
-							consensus: 'A',
-							coverage: 2931,
-							pos: 10,
-						},
-					],
+					concat_pos: 4708,
+					consensus: 'A',
+					count: 990,
+					coverage: 1981,
+					freq: 0.51,
+					nucleotide: 'A',
+					pos: 24,
+				},
+				{
+					chr: 'HA',
+					concat_pos: 4708,
+					consensus: 'A',
+					count: 981,
+					coverage: 1981,
+					freq: 0.01,
+					nucleotide: 'T',
+					pos: 24,
 				},
 			],
 		};
-		testData.genome.forEach(segment => filterSegment(segment));
+		const result = filterGenome(testData);
 
-		expect(testData).to.deep.equal(answer);
+		expect(result).to.deep.equal(answer);
 	});
 });

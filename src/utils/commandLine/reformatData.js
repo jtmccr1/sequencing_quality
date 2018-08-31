@@ -14,11 +14,15 @@ if (args.indexOf('-h') > -1 || args.length != 2) {
 }
 const inputFile = args[0]; //'./data/HS1294_B.removed.json'; //;
 const outputFile = args[1];
-const data = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
 
-const unNestedData = reFormat(data);
-const outputString = JSON.stringify(unNestedData, null);
-fs.writeFile(outputFile, outputString, err => {
-	if (err) throw err;
-	console.log('Data written to file');
+fs.readFile(inputFile, 'utf8', function(err, data) {
+	if (err) throw err; // we'll not consider error handling for now
+
+	const unNestedData = reFormat(data);
+	const outputString = JSON.stringify(unNestedData, null);
+
+	fs.writeFile(outputFile, outputString, err => {
+		if (err) throw err;
+		console.log('Data written to file');
+	});
 });
