@@ -21,37 +21,32 @@ export function filterSegment(segment, coverage = 1000, mininumFrequency = 0.001
 //R.groupBy(x=>x.concat_pos,final2)
 
 //include sample and genome
+const concatAll = R.reduce(R.concat, []);
+const unNestSeq = seg => {
+	const segData = R.dissoc('seq', seg);
+	const mergeSegData = R.merge(R.__, segData);
+	const x = R.map(mergeSegData, seg.seq);
+	return R.values(x);
+};
+const unNestAlleles = loci => {
+	const lociData = R.dissoc('alleles', loci);
+	const mergeLociData = R.merge(R.__, lociData);
+	const x = R.map(mergeLociData, loci.alleles);
+	return R.values(x);
+};
+export const reFormatPipe = R.pipe(
+	R.prop('genome'),
+	R.values(),
+	R.map(unNestSeq),
+	concatAll(),
+	R.map(unNestAlleles),
+	concatAll(),
+	R.identity
+);
 
 export function reFormat(data) {
-	// helper functions
-	const unNestGenome = R.pipe(
-		R.prop('genome'),
-		R.values
-	);
-	// for each of the unNNestedGenome make this helper funciton to add chr
-	// for each of the loci in the seq call this function
-	// unnest seq
-	const addChrtoLocus = o => R.assoc('chr', o.chr);
-	const unNestSeq = seg => {
-		//add sample to loci as well
-		const addChr = addChrtoLocus(seg);
-		const x = R.map(addChr, seg.seq);
-		return x;
+	return {
+		Sample: data.Sample,
+		genome: reFormatPipe(data),
 	};
-	const concatAll = R.reduce(R.concat, []);
-
-	const unNestAlleles = loci => {
-		const lociData = R.dissoc('alleles', loci);
-		const mergeLociData = R.merge(R.__, lociData);
-		const x = R.map(mergeLociData, loci.alleles);
-		return R.values(x);
-	};
-
-	const output = { Sample: data.Sample };
-	const unNestedGenome = unNestGenome(data); ///
-	const unNestedSeq = R.map(unNestSeq, unNestedGenome);
-	const unNestedSeqConcat = concatAll(unNestedSeq);
-	const UnNestedAlleles = R.map(unNestAlleles, unNestedSeqConcat);
-	output['genome'] = concatAll(UnNestedAlleles);
-	return output;
 }
