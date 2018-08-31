@@ -1,110 +1,69 @@
-import * as _ from 'lodash';
-
+const R = require('ramda');
+const maxBy = key => {
+	const holder = {};
+	holder[key] = -Infinity;
+	return R.pipe(
+		R.reduce(R.maxBy(o => o[key]), holder),
+		R.prop(key)
+	);
+};
+const minBy = key => {
+	const holder = {};
+	holder[key] = Infinity;
+	return R.pipe(
+		R.reduce(R.minBy(o => o[key]), holder),
+		R.prop(key)
+	);
+};
 export function parseVariantData(data) {
-	let parsedDataSet = [];
-	const sample = data.Sample;
-	const genome = data.genome;
-	for (const segment of genome) {
-		//cycle through each segment
-		for (const loci of segment.seq) {
-			const consensus = loci.consensus;
-			const coverage = loci.coverage;
-			const concat_pos = loci.concat_pos;
-			const pos = loci.pos;
-			if (!Array.isArray(loci.alleles)) {
-				loci.alleles = Object.values(loci.alleles);
-			}
-			for (const allele of loci.alleles) {
-				if (allele.freq < 0.5) {
-					const nt = allele.nucleotide;
-					const count = allele.count;
-					const datapoint = {
-						sample: sample,
-						chr: segment.chr,
-						nucleotide: nt,
-						consensus: consensus,
-						pos: pos,
-						concat_pos: concat_pos,
-						freq: allele.freq,
-						count: count,
-						coverage: coverage,
-						mutationalClass: allele.mutationalClass,
-					};
-					parsedDataSet.push(datapoint);
-				}
-			}
-		}
-	}
+	const minorAlleles = data.genome.filter(allele => allele.freq < 0.5);
 	const output = {
-		sample: sample,
-		data: parsedDataSet,
+		Sample: data.Sample,
+		data: R.map(R.assoc('Sample', data.Sample), minorAlleles), //Add sample tag to each data point
 		extremes: {
-			freq: [_.minBy(parsedDataSet, a => a.freq).freq, _.maxBy(parsedDataSet, a => a.freq).freq],
-			concat_pos: [
-				_.minBy(parsedDataSet, a => a.concat_pos).concat_pos,
-				_.maxBy(parsedDataSet, a => a.concat_pos).concat_pos,
-			],
+			freq: [minBy('freq')(minorAlleles), maxBy('freq')(minorAlleles)],
+			concat_pos: [minBy('concat_pos')(minorAlleles), maxBy('concat_pos')(minorAlleles)],
 		},
 	};
 	return output;
 }
 
 export function parseCoverageData(data) {
-	const parsedDataSet = [];
-	const sample = data.Sample;
-	const genome = data.genome;
-	for (const segment of genome) {
-		//cycle through each segment
-		for (const loci of segment.seq) {
-			var consensus = loci.consensus;
-			var coverage = loci.coverage;
-			var concat_pos = loci.concat_pos;
-			var pos = loci.pos;
-			var datapoint = {
-				Sample: sample,
-				chr: segment.chr,
-				concat_pos: concat_pos,
-				consensus: consensus,
-				coverage: coverage,
-				pos: pos,
-			};
-			parsedDataSet.push(datapoint);
-		}
-	}
+	const majorAllelesFunct = R.pipe(
+		R.filter(allele => allele.freq > 0.5),
+		R.map(R.pick(['chr', 'concat_pos', 'consensus', 'coverage', 'pos'])),
+		R.map(R.assoc('Sample', data.Sample))
+	);
+
+	const DataSet = majorAllelesFunct(data.genome);
 	//https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
-	parsedDataSet.sort(function(a, b) {
+	DataSet.sort(function(a, b) {
 		return a.concat_pos > b.concat_pos ? 1 : b.concat_pos > a.concat_pos ? -1 : 0;
 	});
 
 	const output = {
-		sample: sample,
-		data: parsedDataSet,
+		Sample: data.Sample,
+		data: DataSet,
 		extremes: {
-			coverage: [
-				_.minBy(parsedDataSet, a => a.coverage).coverage,
-				_.maxBy(parsedDataSet, a => a.coverage).coverage,
-			],
-			concat_pos: [
-				_.minBy(parsedDataSet, a => a.concat_pos).concat_pos,
-				_.maxBy(parsedDataSet, a => a.concat_pos).concat_pos,
-			],
+			coverage: [minBy('coverage')(DataSet), maxBy('coverage')(DataSet)],
+			concat_pos: [minBy('concat_pos')(DataSet), maxBy('concat_pos')(DataSet)],
 		},
 	};
 	return output;
 }
 
 export function parseGenomeAnnotation(data) {
-	var dataset = data.genome;
-	var ORFboxes = [];
-	var cumSize = 0;
-	var offSet = 0;
+	const dataset = data.genome;
+	const ORFboxes = [];
+	let cumSize = 0;
+	let offSet = 0;
 	for (const segment of dataset) {
 		//cycle through each segment
 		for (const openReadingFrame of segment.ORF) {
-			var name = openReadingFrame.name;
-			var ORFsize = 0;
+			const name = openReadingFrame.name;
+			let ORFsize = 0;
 			for (const exon of openReadingFrame.regions) {
-				var geneBox = {
+				const geneBox = {
 					name: name,
 					ORFstart: exon.start + cumSize,
 					ORFend: exon.stop + cumSize,
@@ -124,3 +83,53 @@ export function parseGenomeAnnotation(data) {
 	}
 	return ORFboxes;
 }
+
+const data = {
+	Sample: 'test_sample',
+	genome: [
+		{
+			chr: 'PA',
+			concat_pos: 4708,
+			consensus: 'A',
+			count: 990,
+			coverage: 981,
+			freq: 0.51,
+			mutationalClass: [
+				{
+					ORF: 'PA',
+					aminoAcidPos: 0,
+					classification: 'Synonymous',
+					codingPos: 0,
+					codonPos: 0,
+					consensusAA: 'M',
+					varAA: 'M',
+				},
+			],
+			nucleotide: 'A',
+			pos: 24,
+		},
+		{
+			chr: 'PA',
+			concat_pos: 4708,
+			consensus: 'A',
+			count: 981,
+			coverage: 981,
+			freq: 0.49,
+			mutationalClass: [
+				{
+					ORF: 'PA',
+					aminoAcidPos: 0,
+					classification: 'NonSynonymous',
+					codingPos: 0,
+					codonPos: 0,
+					consensusAA: 'M',
+					varAA: 'G',
+				},
+			],
+			nucleotide: 'T',
+			pos: 24,
+		},
+	],
+};
+
+parseCoverageData(data);

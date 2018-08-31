@@ -10,8 +10,8 @@ export const drawVariants = (svg, chartGeom, scales, data, colours) => {
 	// .curve(curveCatmullRom.alpha(0.3));
 	let samples = [];
 	data.forEach(element => {
-		if (samples.indexOf(element.sample) === -1) {
-			samples.push(element.sample);
+		if (samples.indexOf(element.Sample) === -1) {
+			samples.push(element.Sample);
 		}
 	});
 	let dataArray = [];

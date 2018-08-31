@@ -11,16 +11,16 @@ import { timingSafeEqual } from 'crypto';
 
 const startingSamples = [
 	{
-		run: 'HK_1',
-		sample: 'HS1345_B',
+		run: 'HK_8',
+		sample: 'PC1A',
 	},
 	{
-		run: 'HK_1',
-		sample: 'HS1341_B',
+		run: 'HK_8',
+		sample: 'PC1B',
 	},
 	{
-		run: 'HK_1',
-		sample: 'HS1357_B',
+		run: 'HK_8',
+		sample: 'PC2A',
 	},
 ];
 
@@ -156,7 +156,7 @@ class App extends Component {
 	addSampleData() {
 		this.setState({ variantData: [], coverageData: [] });
 		for (const sample of this.state.samples) {
-			getData(`${sample.run}/${sample.sample}.removed.filtered.json`, this.addData);
+			getData(`${sample.run}/${sample.sample}.removed.flattened.filtered.json`, this.addData);
 		}
 	}
 

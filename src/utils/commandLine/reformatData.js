@@ -17,12 +17,12 @@ const outputFile = args[1];
 
 fs.readFile(inputFile, 'utf8', function(err, data) {
 	if (err) throw err; // we'll not consider error handling for now
+	const sample = JSON.parse(data);
 
-	const unNestedData = reFormat(data);
+	const unNestedData = reFormat(sample);
 	const outputString = JSON.stringify(unNestedData, null);
 
 	fs.writeFile(outputFile, outputString, err => {
 		if (err) throw err;
-		console.log('Data written to file');
 	});
 });

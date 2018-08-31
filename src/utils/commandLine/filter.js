@@ -24,6 +24,5 @@ fs.readFile(inputFile, 'utf8', function(err, data) {
 	const filteredSampleString = JSON.stringify(filteredSample, null);
 	fs.writeFile(outputFile, filteredSampleString, err => {
 		if (err) throw err;
-		console.log('Data written to file');
 	});
 });
