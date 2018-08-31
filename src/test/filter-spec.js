@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const _ = require('lodash');
-import { filterSegment } from '../utils/filter';
+import { filterSegment } from '../utils/commandLine/functions';
 
 describe('Filter', function() {
 	it('filter coverage and frequency', function() {

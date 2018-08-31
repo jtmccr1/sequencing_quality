@@ -1,4 +1,5 @@
 const fs = require('fs');
+import { filterSegment } from './filter';
 
 const args = process.argv.slice(2);
 // Look for help
@@ -27,19 +28,3 @@ fs.readFile(inputFile, 'utf8', function(err, data) {
 		console.log('Data written to file');
 	});
 });
-export function filterAllele(position, mininumFrequency = 0.001, frequencyMax = 1) {
-	//Positions is an object of alleles
-	//convert alleles to arrary from object so we can cycle through
-	if (!Array.isArray(position.alleles)) {
-		position.alleles = Object.values(position.alleles);
-	}
-	position.alleles = position.alleles.filter(
-		alleles => alleles.freq >= mininumFrequency && alleles.freq <= frequencyMax
-	);
-}
-
-export function filterSegment(segment, coverage = 1000, mininumFrequency = 0.001, frequencyMax = 1) {
-	//filter postions based on coverage
-	segment.seq = segment.seq.filter(pos => pos.coverage >= coverage);
-	segment.seq.forEach(pos => filterAllele(pos, mininumFrequency, frequencyMax));
-}
