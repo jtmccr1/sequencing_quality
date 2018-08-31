@@ -34,7 +34,7 @@ export const drawVariants = (svg, chartGeom, scales, data, colours) => {
 			return scales.y(d.freq);
 		})
 		.attr('r', 2)
-		.attr('fill', d => colours[samples.indexOf(d.sample) % colours.length]);
+		.attr('fill', d => colours[samples.indexOf(d.Sample) % colours.length]);
 };
 
 /* given the DOM dimensions of the chart container, calculate the chart geometry (used by the SVG & D3) */
