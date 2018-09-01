@@ -1,4 +1,5 @@
 const R = require('ramda');
+const RA = require('ramda-adjunct');
 const filterPipe = (coverage, mininumFrequency, maxFrequency) =>
 	R.pipe(
 		R.prop('genome'),
@@ -45,4 +46,75 @@ export function reFormat(data) {
 		Sample: data.Sample,
 		genome: reFormatPipe(data),
 	};
+}
+// Processing duplicate functions
+const comp = (l, r) => l.concat_pos === r.concat_pos && l.nucleotide === r.nucleotide;
+const notInLast = R.pipe(
+	R.differenceWith(comp),
+	R.map(R.omit(['freq', 'count', 'coverage', 'consensus'])),
+	R.map(R.merge(R.zipObj(['freq', 'count', 'coverage', 'consensus'], [0, 0, 0, 'N'])))
+);
+
+// pass coverage and consensus to possition if possible
+
+//add chrPosNuc key and objectify
+const objFromListWith = R.curry((fn, list) => R.chain(R.zipObj, R.map(fn))(list));
+const listToObject = R.pipe(
+	R.map(pos => R.assoc('allele', `${pos.chr}:${pos.pos}${pos.nucleotide}`, pos)),
+	objFromListWith(R.prop('allele'))
+);
+
+const mergeLogic = (k, l, r) => {
+	// always the Same bewteen duplicate nucleotide, concat_pos,chr, pos,
+	const justOne = ['nucleotide', 'concat_pos', 'chr', 'pos', 'mutationalClass', 'allele'];
+	const alwaysTwo = ['freq', 'count', 'coverage', 'Sample'];
+	if (R.indexOf(k, justOne) > -1) {
+		if (R.equals(l, r)) {
+			return l;
+		} else {
+			throw new Error(`left and right should match at key ${k}`);
+		}
+	} else if (R.indexOf(k, alwaysTwo) > -1) {
+		return R.concat([l], [r]);
+	} else if (k === 'consensus') {
+		if (l === r) {
+			return l;
+		} else {
+			return R.concat([l], [r]);
+		}
+	} else {
+		throw new Error(`Don't know how to handle key ${k}`);
+	}
+};
+
+// return mean if no entry is 0 otherwise give 0
+const stringentMean = array => (R.indexOf(0, array) > -1 || R.indexOf(null, array) > -1 ? 0 : R.mean(array));
+//convert to array, save arrays, get means - keeping original names to maintian compatability
+const processMerged = R.pipe(
+	R.values(),
+	R.map(RA.renameKeys({ freq: 'freqRaw', count: 'countRaw', coverage: 'coverageRaw' })),
+	R.map(pos =>
+		R.merge(pos, {
+			freq: stringentMean(pos.freqRaw),
+			count: stringentMean(pos.countRaw),
+			coverage: stringentMean(pos.coverageRaw),
+		})
+	)
+);
+const replaceGenome = x =>
+	R.pipe(
+		R.dissoc('genome'),
+		R.assoc('genome', x)
+	);
+
+export function compareSites(data1, data2) {
+	// replace the genome value with a new entry that is an object keyed by chr:posNuc (HA:100A) and contains 0's where alleles which were found in the other sample are missing
+	const full1 = replaceGenome(listToObject(R.concat(data1.genome, notInLast(data2.genome, data1.genome))))(data1);
+	const full2 = replaceGenome(listToObject(R.concat(data2.genome, notInLast(data1.genome, data2.genome))))(data2);
+	const mergedData = R.mergeDeepWithKey(mergeLogic, full1, full2);
+	// back to arrary and mean if needed
+	const arrayGenome = processMerged(mergedData.genome);
+	//rename to raw
+	const final = replaceGenome(arrayGenome)(mergedData);
+	return final;
 }

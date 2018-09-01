@@ -16,6 +16,7 @@
 		"glamor": "^2.20.40",
 		"lodash": "^4.17.10",
 		"ramda": "^0.25.0",
+		"ramda-adjunct": "^2.9.0",
 		"react-bootstrap-table": "^4.3.1",
 		"react-json-table": "^0.1.1",
 		"react-scripts": "^1.1.5",
