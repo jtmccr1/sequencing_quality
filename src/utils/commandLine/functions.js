@@ -16,8 +16,6 @@ export function filterGenome(data, coverage = 1000, mininumFrequency = 0.001, ma
 }
 /// reformatting
 
-//R.groupBy(x=>x.concat_pos,final2)
-
 //include sample and genome
 const concatAll = R.reduce(R.concat, []);
 const unNestSeq = seg => {
@@ -141,7 +139,6 @@ export function compareSites(data1, data2) {
 	const full1Corrected = replaceGenome(listToObject(full1.genome.map(correctMissing(full1.genome))))(full1);
 	const full2Corrected = replaceGenome(listToObject(full2.genome.map(correctMissing(full2.genome))))(full2);
 
-	console.log(full1Corrected);
 	const mergedData = R.mergeDeepWithKey(mergeLogic, full1Corrected, full2Corrected);
 	// back to arrary and mean if needed
 	const arrayGenome = processMerged(mergedData.genome);

@@ -23,7 +23,7 @@ const data2 = JSON.parse(fs.readFileSync(inputFile2, 'utf8'));
 // add alleles that are missing from each
 
 const processedData = compareSites(data1, data2);
-
-fs.writeFile(outputFile, processedData, err => {
+const processedDataString = JSON.stringify(processedData, null);
+fs.writeFile(outputFile, processedDataString, err => {
 	if (err) throw err;
 });
