@@ -142,40 +142,73 @@ class App extends Component {
 	}
 
 	updateVariantData() {
-		this.setState({ variantData: [], coverageData: [] });
-		for (const SPECID of this.state.selected) {
-			getData(`/processedSNV/${SPECID}.processed.json`, this.addData);
+		const currentSamples = this.state.variantData.map(x => x.Sample[0].split('_')[0]);
+		// Add the new samples
+		const newSPECID = this.state.selected.filter(x => currentSamples.indexOf(x) === -1);
+		console;
+		const that = this;
+		async function addNew(newSPECID) {
+			console.log('here');
+			for (const SPECID of newSPECID) {
+				await getData(`processedSNV/${SPECID}.processed.json`, that.addData);
+			}
+			// wait until everything is updated then remove the deselected ones
+
+			const updatedVariants = that.state.variantData.filter(x => {
+				const SPECID = x.Sample[0].split('_')[0];
+				return that.state.selected.indexOf(SPECID) > -1;
+			});
+			const updatedCoverage = that.state.coverageData.filter(x => {
+				const SPECID = x.Sample[0].split('_')[0];
+				return that.state.selected.indexOf(SPECID) > -1;
+			});
+			if (updatedVariants.length !== that.state.variantData.length) {
+				that.setState({
+					variantData: updatedVariants,
+					coverageData: updatedCoverage,
+				});
+			}
 		}
+		addNew(newSPECID);
 	}
 	// ############ -- Table functions -- #####################
 	onRowSelect({ SPECID }, isSelected) {
 		if (isSelected) {
-			this.setState({
-				selected: [...this.state.selected, SPECID],
-			});
+			console.log(this.state.selected);
+			this.setState(
+				{
+					selected: [...this.state.selected, SPECID],
+				},
+				() => {
+					this.updateVariantData();
+				}
+			);
 		} else {
-			this.setState({ selected: this.state.selected.filter(it => it !== SPECID) });
+			this.setState({ selected: this.state.selected.filter(it => it !== SPECID) }, () => {
+				this.updateVariantData();
+			});
 		}
-		this.updateVariantData();
-		return false;
 	}
 
 	onSelectAll(isSelected, rows) {
 		if (!isSelected) {
-			this.setState({ selected: [] });
+			this.setState({ selected: [] }, () => {
+				this.updateVariantData();
+			});
 		} else {
-			this.setState({ selected: rows.map(x => x.SPECID) });
+			this.setState({ selected: rows.map(x => x.SPECID) }, () => {
+				this.updateVariantData();
+			});
 		}
-		this.updateVariantData();
 
 		return false;
 	}
 
 	componentDidMount() {
-		getData('/NY.OR.json', this.addGenome);
+		getData('NY.OR.json', this.addGenome);
 		//getData('requestCoverageData', this.addData);
 		this.updateVariantData();
-		getData('/SampleMetaData.json', this.addMetaData);
+		getData('SampleMetaData.json', this.addMetaData);
 	}
 
 	render() {
