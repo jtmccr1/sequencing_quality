@@ -10,7 +10,6 @@ class FrequencyAndSegmentSelection extends React.Component {
 					selectedPositions={this.props.selectedPositions}
 					filterPosition={this.props.filterPosition}
 				/>
-				<FrequencyForm />
 			</div>
 		);
 	}

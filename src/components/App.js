@@ -5,6 +5,8 @@ import '../styles/App.css';
 import { getData } from '../utils/getData';
 import Summary from './Summary';
 import MetaDataTable from './MetaDataTable';
+import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
+
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
 
@@ -66,7 +68,8 @@ class App extends Component {
 		console.log(ops);
 		if (ops.seg === '') {
 			//if no segment then reset and load all the data
-			this.addSampleData();
+
+			this.setState({ variantData: [], coverageData: [] }, this.updateVariantData());
 		} else {
 			// If no position data
 			if (!ops.pos) {
@@ -236,6 +239,15 @@ class App extends Component {
 						<div className="loader" />
 					</div>
 				)}
+				<div align="left">
+					<FrequencyAndSegmentSelection
+						style={{ width: '25%', margin: 'auto', height: '100%' }}
+						title={'Filter data'}
+						selectedPositions={this.state.selectedPositions}
+						filterPosition={this.state.filterPosition}
+						updateDisplay={this.state.updateDisplay}
+					/>
+				</div>
 				<div>
 					<MetaDataTable
 						data={this.state.metaData}

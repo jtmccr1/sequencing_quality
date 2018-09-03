@@ -2,9 +2,9 @@ import React from 'react';
 import { css } from 'glamor';
 import CoveragePlot from './coveragePlot';
 import VariantPlot from './variantPlot';
+import TechnicalPlot from './TechnicalReplicates';
 import { channelColours } from '../utils/commonStyles';
 import CummulativeDistribution from './cummulativeDistribution';
-import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
 
 const panelContainer = css({
 	width: 'calc(100%-20px)',
@@ -34,13 +34,6 @@ class Summary extends React.Component {
 				<div {...panelContainer}>
 					<div {...panelTitle} />
 					<div {...flexRow}>
-						<FrequencyAndSegmentSelection
-							style={{ width: '25%', margin: 'auto', height: '100%' }}
-							title={'Filter data'}
-							selectedPositions={this.props.selectedPositions}
-							filterPosition={this.props.filterPosition}
-							updateDisplay={this.props.updateDisplay}
-						/>
 						<CoveragePlot
 							style={{ width: '25%', margin: 'auto', height: '100%' }}
 							title={'Coverage'}
@@ -58,6 +51,12 @@ class Summary extends React.Component {
 						<CummulativeDistribution
 							style={{ width: '25%', margin: 'auto', height: '100%' }}
 							title={'CDF of variant frequencies'}
+							variantData={this.props.variantData}
+							colours={channelColours}
+						/>
+						<TechnicalPlot
+							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							title={'Tenchical Replicates'}
 							variantData={this.props.variantData}
 							colours={channelColours}
 						/>
