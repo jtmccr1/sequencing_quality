@@ -1,0 +1,172 @@
+{
+    "genome": [
+        {
+            "seg": "PB2",
+            "size": 2310,
+            "ORF": [
+                {
+                    "name": "PB2",
+                    "regions": [
+                        {
+                            "start": 12,
+                            "stop": 2292
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "PB1",
+            "size": 2309,
+            "ORF": [
+                {
+                    "name": "PB1",
+                    "regions": [
+                        {
+                            "start": 7,
+                            "stop": 2281
+                        }
+                    ]
+                },
+                {
+                    "name": "PB1-F2",
+                    "regions": [
+                        {
+                            "start": 101,
+                            "stop": 374
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "PA",
+            "size": 2192,
+            "ORF": [
+                {
+                    "name": "PA",
+                    "regions": [
+                        {
+                            "start": 10,
+                            "stop": 2161
+                        }
+                    ]
+                },
+                {
+                    "name": "PA-X",
+                    "regions": [
+                        {
+                            "start": 10,
+                            "stop": 580
+                        },
+                        {
+                            "start": 581,
+                            "stop": 770
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "HA",
+            "size": 1737,
+            "ORF": [
+                {
+                    "name": "HA",
+                    "regions": [
+                        {
+                            "start": 17,
+                            "stop": 1718
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "NP",
+            "size": 1538,
+            "ORF": [
+                {
+                    "name": "NP",
+                    "regions": [
+                        {
+                            "start": 30,
+                            "stop": 1527
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "NR",
+            "size": 1410,
+            "ORF": [
+                {
+                    "name": "NR",
+                    "regions": [
+                        {
+                            "start": 0,
+                            "stop": 1410
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "M",
+            "size": 993,
+            "ORF": [
+                {
+                    "name": "M1",
+                    "regions": [
+                        {
+                            "start": 10,
+                            "stop": 769
+                        }
+                    ]
+                },
+                {
+                    "name": "M2",
+                    "regions": [
+                        {
+                            "start": 10,
+                            "stop": 36
+                        },
+                        {
+                            "start": 724,
+                            "stop": 992
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "seg": "NS",
+            "size": 860,
+            "ORF": [
+                {
+                    "name": "NS1",
+                    "regions": [
+                        {
+                            "start": 11,
+                            "stop": 704
+                        }
+                    ]
+                },
+                {
+                    "name": "NS2",
+                    "regions": [
+                        {
+                            "start": 11,
+                            "stop": 41
+                        },
+                        {
+                            "start": 513,
+                            "stop": 849
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
