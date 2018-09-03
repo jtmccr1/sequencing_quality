@@ -7,14 +7,6 @@ import Summary from './Summary';
 import MetaDataTable from './MetaDataTable';
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
-import { timingSafeEqual } from 'crypto';
-
-const startingSamples = [
-	{
-		SPECID: 'HS1250',
-		path: './processedSNV/HS1250.processed.json',
-	},
-];
 
 class App extends Component {
 	constructor(props) {
@@ -24,17 +16,19 @@ class App extends Component {
 			coverageData: [],
 			genomeAnnotation: [],
 			variantData: [],
-			samples: startingSamples,
 			selectedPositions: '',
 			metaData: '',
+			selected: ['HS1391'],
 		};
 		this.addData = newData => {
 			this.setState(this.calcNewState(newData));
 		};
 		this.filterPosition = this.filterPosition.bind(this);
-		this.addSampleData = this.addSampleData.bind(this);
+		this.updateVariantData = this.updateVariantData.bind(this);
 		this.updateDisplay = this.updateDisplay.bind(this);
-		this.selectSamples = this.selectSamples.bind(this);
+		this.onSelectAll = this.onSelectAll.bind(this);
+		this.onRowSelect = this.onRowSelect.bind(this);
+
 		this.addGenome = newData => {
 			let newState = this.state;
 			newState['genomeAnnotation'] = parseGenomeAnnotation(newData);
@@ -147,27 +141,40 @@ class App extends Component {
 		}
 	}
 
-	addSampleData() {
+	updateVariantData() {
 		this.setState({ variantData: [], coverageData: [] });
-		for (const sample of this.state.samples) {
-			getData(sample.path, this.addData);
+		for (const SPECID of this.state.selected) {
+			getData(`/processedSNV/${SPECID}.processed.json`, this.addData);
 		}
 	}
-
-	selectSamples(row) {
-		const newSample = {
-			SPECID: row.SPECID,
-			path: `processedSNV/${row.SPECID}.processed.json`,
-		};
-		const samplesToDisplay = this.state.samples;
-		samplesToDisplay.push(newSample);
-		this.setState({ samples: samplesToDisplay });
-		this.addSampleData();
+	// ############ -- Table functions -- #####################
+	onRowSelect({ SPECID }, isSelected) {
+		if (isSelected) {
+			this.setState({
+				selected: [...this.state.selected, SPECID],
+			});
+		} else {
+			this.setState({ selected: this.state.selected.filter(it => it !== SPECID) });
+		}
+		this.updateVariantData();
+		return false;
 	}
+
+	onSelectAll(isSelected, rows) {
+		if (!isSelected) {
+			this.setState({ selected: [] });
+		} else {
+			this.setState({ selected: rows.map(x => x.SPECID) });
+		}
+		this.updateVariantData();
+
+		return false;
+	}
+
 	componentDidMount() {
 		getData('/NY.OR.json', this.addGenome);
 		//getData('requestCoverageData', this.addData);
-		this.addSampleData();
+		this.updateVariantData();
 		getData('/SampleMetaData.json', this.addMetaData);
 	}
 
@@ -199,8 +206,9 @@ class App extends Component {
 				<div>
 					<MetaDataTable
 						data={this.state.metaData}
-						selected={this.state.samples}
-						selectorFunction={this.selectSamples}
+						selected={this.state.selected}
+						onRowSelect={this.onRowSelect}
+						onSelectAll={this.onSelectAll}
 					/>
 				</div>
 			</div>

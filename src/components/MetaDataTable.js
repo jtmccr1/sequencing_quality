@@ -15,37 +15,15 @@ const numberColumn = {
 class MetaDataTable extends Component {
 	constructor(props) {
 		super(props);
-		this.onSelectAll = this.onSelectAll.bind(this);
-		this.onRowSelect = this.onRowSelect.bind(this);
-		this.state = {
-			selected: [],
-		};
-	}
-	onRowSelect({ SPECID }, isSelected) {
-		if (isSelected) {
-			this.setState({
-				selected: [...this.state.selected, SPECID],
-			});
-		} else {
-			this.setState({ selected: this.state.selected.filter(it => it !== SPECID) });
-		}
-		return false;
-	}
-
-	onSelectAll(isSelected) {
-		if (!isSelected) {
-			this.setState({ selected: [] });
-		}
-		return false;
 	}
 
 	render() {
 		const selectRowProp = {
 			mode: 'checkbox',
 			clickToSelect: true,
-			onSelect: this.onRowSelect,
-			onSelectAll: this.onSelectAll,
-			selected: this.state.selected,
+			onSelect: this.props.onRowSelect,
+			onSelectAll: this.props.onSelectAll,
+			selected: this.props.selected,
 		};
 
 		const options = {
