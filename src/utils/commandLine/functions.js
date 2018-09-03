@@ -1,5 +1,6 @@
 const R = require('ramda');
 const RA = require('ramda-adjunct');
+
 const filterPipe = (coverage, mininumFrequency, maxFrequency) =>
 	R.pipe(
 		R.prop('genome'),
@@ -47,7 +48,7 @@ export function reFormat(data) {
 		genome: reFormatPipe(data),
 	};
 }
-// Processing duplicate functions
+// ************* Processing duplicate functions *******************************
 const comp = (l, r) => l.concat_pos === r.concat_pos && l.nucleotide === r.nucleotide;
 const notInLast = R.pipe(
 	R.differenceWith(comp),
@@ -66,7 +67,7 @@ const listToObject = R.pipe(
 
 const mergeLogic = (k, l, r) => {
 	// always the Same bewteen duplicate nucleotide, concat_pos,chr, pos,
-	const justOne = ['nucleotide', 'concat_pos', 'chr', 'pos', 'mutationalClass', 'allele'];
+	const justOne = ['nucleotide', 'concat_pos', 'chr', 'pos', 'mutationalClass', 'allele', 'loci'];
 	const alwaysTwo = ['freq', 'count', 'coverage', 'Sample'];
 	if (R.indexOf(k, justOne) > -1) {
 		if (R.equals(l, r)) {
@@ -107,11 +108,41 @@ const replaceGenome = x =>
 		R.assoc('genome', x)
 	);
 
+const correctMissing = R.pipe(
+	R.groupBy(R.prop('loci')), // object keyed by loci with arrays of alleles as values
+	R.map(R.map(R.pickAll(['coverage', 'consensus']))), //for each key for each allele in array grab the coverage and consensus
+	R.map(R.reduce(R.maxBy(a => a.coverage), { coverage: 0 })),
+	maxes => {
+		return R.over(
+			R.lens(R.props(['consensus', 'coverage', 'loci']), R.mergeDeepLeft()),
+			([consensus, coverage, loci]) => maxes[loci]
+		);
+	} // reduce the array to the entry with the most coverage (will be either what was found in the sample or 0)
+);
+
 export function compareSites(data1, data2) {
+	// add loci key
+	const data1WithLoci = replaceGenome(R.map(pos => R.assoc('loci', `${pos.chr}:${pos.pos}`, pos), data1.genome))(
+		data1
+	);
+	const data2WithLoci = replaceGenome(R.map(pos => R.assoc('loci', `${pos.chr}:${pos.pos}`, pos), data2.genome))(
+		data2
+	);
+
 	// replace the genome value with a new entry that is an object keyed by chr:posNuc (HA:100A) and contains 0's where alleles which were found in the other sample are missing
-	const full1 = replaceGenome(listToObject(R.concat(data1.genome, notInLast(data2.genome, data1.genome))))(data1);
-	const full2 = replaceGenome(listToObject(R.concat(data2.genome, notInLast(data1.genome, data2.genome))))(data2);
-	const mergedData = R.mergeDeepWithKey(mergeLogic, full1, full2);
+	const full1 = replaceGenome(R.concat(data1WithLoci.genome, notInLast(data2WithLoci.genome, data1WithLoci.genome)))(
+		data1WithLoci
+	);
+	const full2 = replaceGenome(R.concat(data2WithLoci.genome, notInLast(data1WithLoci.genome, data2WithLoci.genome)))(
+		data2WithLoci
+	);
+	// correct coverage and consensus at missing alleles where there was something at the loci. ie. coverage !=0 but all reads were not the reported nucleotide
+
+	const full1Corrected = replaceGenome(listToObject(full1.genome.map(correctMissing(full1.genome))))(full1);
+	const full2Corrected = replaceGenome(listToObject(full2.genome.map(correctMissing(full2.genome))))(full2);
+
+	console.log(full1Corrected);
+	const mergedData = R.mergeDeepWithKey(mergeLogic, full1Corrected, full2Corrected);
 	// back to arrary and mean if needed
 	const arrayGenome = processMerged(mergedData.genome);
 	//rename to raw
