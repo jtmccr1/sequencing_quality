@@ -11,16 +11,8 @@ import { timingSafeEqual } from 'crypto';
 
 const startingSamples = [
 	{
-		run: 'HK_8',
-		sample: 'PC1A',
-	},
-	{
-		run: 'HK_8',
-		sample: 'PC1B',
-	},
-	{
-		run: 'HK_8',
-		sample: 'PC2A',
+		SPECID: 'HS1250',
+		path: './processedSNV/HS1250.processed.json',
 	},
 ];
 
@@ -42,6 +34,7 @@ class App extends Component {
 		this.filterPosition = this.filterPosition.bind(this);
 		this.addSampleData = this.addSampleData.bind(this);
 		this.updateDisplay = this.updateDisplay.bind(this);
+		this.selectSamples = this.selectSamples.bind(this);
 		this.addGenome = newData => {
 			let newState = this.state;
 			newState['genomeAnnotation'] = parseGenomeAnnotation(newData);
@@ -153,13 +146,24 @@ class App extends Component {
 			}
 		}
 	}
+
 	addSampleData() {
 		this.setState({ variantData: [], coverageData: [] });
 		for (const sample of this.state.samples) {
-			getData(`${sample.run}/${sample.sample}.removed.flattened.filtered.json`, this.addData);
+			getData(sample.path, this.addData);
 		}
 	}
 
+	selectSamples(row) {
+		const newSample = {
+			SPECID: row.SPECID,
+			path: `processedSNV/${row.SPECID}.processed.json`,
+		};
+		const samplesToDisplay = this.state.samples;
+		samplesToDisplay.push(newSample);
+		this.setState({ samples: samplesToDisplay });
+		this.addSampleData();
+	}
 	componentDidMount() {
 		getData('/NY.OR.json', this.addGenome);
 		//getData('requestCoverageData', this.addData);
@@ -193,7 +197,11 @@ class App extends Component {
 					</div>
 				)}
 				<div>
-					<MetaDataTable data={this.state.metaData} />
+					<MetaDataTable
+						data={this.state.metaData}
+						selected={this.state.samples}
+						selectorFunction={this.selectSamples}
+					/>
 				</div>
 			</div>
 		);

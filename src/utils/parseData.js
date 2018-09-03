@@ -16,7 +16,7 @@ const minBy = key => {
 	);
 };
 export function parseVariantData(data) {
-	const minorAlleles = data.genome.filter(allele => allele.freq < 0.5);
+	const minorAlleles = data.genome.filter(allele => allele.freq < 0.5 && allele.freq > 0);
 	const output = {
 		Sample: data.Sample,
 		data: R.map(R.assoc('Sample', data.Sample), minorAlleles), //Add sample tag to each data point
@@ -30,7 +30,7 @@ export function parseVariantData(data) {
 
 export function parseCoverageData(data) {
 	const majorAllelesFunct = R.pipe(
-		R.filter(allele => allele.freq > 0.5),
+		R.filter(allele => allele.freq > 0.5 && allele.freq > 0),
 		R.map(R.pick(['chr', 'concat_pos', 'consensus', 'coverage', 'pos'])),
 		R.map(R.assoc('Sample', data.Sample))
 	);

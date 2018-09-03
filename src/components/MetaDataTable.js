@@ -2,20 +2,6 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import '../../node_modules/react-bootstrap-table/css/react-bootstrap-table.css';
 
-function onSelectRow(row, isSelected, e) {
-	// if (isSelected) {
-	// 	alert(`You just selected '${row['name']}'`);
-	// }
-}
-
-const selectRowProp = {
-	mode: 'checkbox',
-	clickToSelect: true,
-	unselectable: [2],
-	selected: [1],
-	onSelect: onSelectRow,
-	bgColor: 'gold',
-};
 const textColumn = {
 	dataAlign: 'left',
 	headerAlign: 'left',
@@ -29,12 +15,26 @@ const numberColumn = {
 class MetaDataTable extends Component {
 	constructor(props) {
 		super(props);
-
+		this.onSelectRow = this.onSelectRow.bind(this);
 		this.options = {
 			defaultSortName: 'ENROLLID', // default sort column name
 			defaultSortOrder: 'desc', // default sort order
 		};
+		this.selectRowProp = {
+			mode: 'checkbox',
+			clickToSelect: true,
+			unselectable: [2],
+			selected: [1],
+			onSelect: this.onSelectRow,
+			bgColor: 'gold',
+		};
 	}
+	onSelectRow(row, isSelected, e) {
+		if (isSelected) {
+			this.props.selectorFunction(row);
+		}
+	}
+
 	render() {
 		return (
 			<div>
@@ -44,7 +44,7 @@ class MetaDataTable extends Component {
 					striped
 					hover
 					condensed
-					selectRow={selectRowProp}
+					selectRow={this.selectRowProp}
 					options={this.options}
 				>
 					<TableHeaderColumn isKey dataField="SPECID" dataSort width="100" {...textColumn}>
