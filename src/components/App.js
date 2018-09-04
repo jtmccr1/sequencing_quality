@@ -6,6 +6,7 @@ import { getData } from '../utils/getData';
 import Summary from './Summary';
 import MetaDataTable from './MetaDataTable';
 import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
+import Figures from './Figures';
 
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
@@ -21,6 +22,7 @@ class App extends Component {
 			selectedPositions: '',
 			metaData: '',
 			selected: ['HS1391'],
+			allVariants: [],
 		};
 		this.addData = newData => {
 			this.setState(this.calcNewState(newData));
@@ -244,8 +246,8 @@ class App extends Component {
 						style={{ width: '25%', margin: 'auto', height: '100%' }}
 						title={'Filter data'}
 						selectedPositions={this.state.selectedPositions}
-						filterPosition={this.state.filterPosition}
-						updateDisplay={this.state.updateDisplay}
+						filterPosition={this.filterPosition}
+						updateDisplay={this.updateDisplay}
 					/>
 				</div>
 				<div>
@@ -255,6 +257,9 @@ class App extends Component {
 						onRowSelect={this.onRowSelect}
 						onSelectAll={this.onSelectAll}
 					/>
+				</div>
+				<div>
+					<Figures />
 				</div>
 			</div>
 		);

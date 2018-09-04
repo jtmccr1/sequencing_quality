@@ -1,6 +1,5 @@
 import React from 'react';
 import Filters from './SegmentForm';
-import FrequencyForm from './FrequencyForm';
 class FrequencyAndSegmentSelection extends React.Component {
 	render() {
 		return (

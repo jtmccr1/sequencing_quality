@@ -39,6 +39,7 @@ class MetaDataTable extends Component {
 					striped
 					hover
 					condensed
+					pagination
 					selectRow={selectRowProp}
 					options={options}
 				>
@@ -63,7 +64,12 @@ class MetaDataTable extends Component {
 					<TableHeaderColumn dataField="gc_ul" dataSort width="120" {...numberColumn}>
 						Titer (gc/ul)
 					</TableHeaderColumn>
-					<TableHeaderColumn dataField="vaccination_status" dataSort width="150" {...numberColumn}>
+					<TableHeaderColumn
+						dataField="vaccination_status"
+						dataSort
+						width="150"
+						{...{ ...numberColumn, filter: { type: 'TextFilter', delay: 500 } }}
+					>
 						Vaccination Status
 					</TableHeaderColumn>
 				</BootstrapTable>
