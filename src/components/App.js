@@ -7,7 +7,6 @@ import Summary from './Summary';
 import MetaDataTable from './MetaDataTable';
 import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
 import Figures from './Figures';
-
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
 
@@ -22,7 +21,6 @@ class App extends Component {
 			selectedPositions: '',
 			metaData: '',
 			selected: ['HS1391'],
-			allVariants: [],
 		};
 		this.addData = newData => {
 			this.setState(this.calcNewState(newData));
@@ -145,7 +143,6 @@ class App extends Component {
 			}
 		}
 	}
-
 	updateVariantData() {
 		const currentSamples = this.state.variantData.map(x => x.Sample[0].split('_')[0]);
 		// Add the new samples
@@ -258,9 +255,9 @@ class App extends Component {
 						onSelectAll={this.onSelectAll}
 					/>
 				</div>
-				<div>
-					<Figures />
-				</div>
+				{/*<div>
+					<Figures metaData={this.state.metaData} variantData={this.state.variantData} />
+				</div> */}
 			</div>
 		);
 	}

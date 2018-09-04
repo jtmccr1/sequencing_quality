@@ -58,7 +58,12 @@ class MetaDataTable extends Component {
 					<TableHeaderColumn dataField="collect" dataSort width="120" {...numberColumn}>
 						Date of Collection
 					</TableHeaderColumn>
-					<TableHeaderColumn dataField="DPI" dataSort width="120" {...numberColumn}>
+					<TableHeaderColumn
+						dataField="DPI"
+						dataSort
+						width="120"
+						{...{ ...numberColumn, filter: { type: 'TextFilter', delay: 500 } }}
+					>
 						Days post onset
 					</TableHeaderColumn>
 					<TableHeaderColumn dataField="gc_ul" dataSort width="120" {...numberColumn}>

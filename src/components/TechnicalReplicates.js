@@ -3,15 +3,15 @@ import { select } from 'd3-selection';
 import { drawGenomeAnnotation, drawAxes, calcScales } from '../utils/commonFunctions';
 import { chartTitleCSS } from '../utils/commonStyles';
 
-export const drawVariants = (svg, chartGeom, scales, data, colours) => {
+export const drawVariants = (svg, chartGeom, scales, data, originalData, colours) => {
 	/* data is array of channelData */
 	/* https://stackoverflow.com/questions/8689498/drawing-multiple-lines-in-d3-js */
 
 	// .curve(curveCatmullRom.alpha(0.3));
-	let samples = [];
-	data.forEach(element => {
-		if (samples.indexOf(element.Sample) === -1) {
-			samples.push(element.Sample);
+	let Originalsamples = [];
+	originalData.forEach(element => {
+		if (Originalsamples.indexOf(element.Sample) === -1) {
+			Originalsamples.push(element.Sample);
 		}
 	});
 	let dataArray = [];
@@ -34,7 +34,7 @@ export const drawVariants = (svg, chartGeom, scales, data, colours) => {
 			return scales.y(d.freqRaw[1]);
 		})
 		.attr('r', 2)
-		.attr('fill', d => colours[samples.indexOf(d.Sample) % colours.length]);
+		.attr('fill', d => colours[Originalsamples.indexOf(d.Sample) % colours.length]);
 };
 
 /* given the DOM dimensions of the chart container, calculate the chart geometry (used by the SVG & D3) */
@@ -68,7 +68,14 @@ class TechnicalPlot extends React.Component {
 		const scales = calcScales(dimensions.chartGeom, extremes, 'freq', 'freq', ['logY', 'logX']);
 		drawAxes(svg, dimensions.chartGeom, scales);
 		const technicalReplicates = this.props.variantData.filter(x => x.Sample[0] !== x.Sample[1]);
-		drawVariants(svg, dimensions.chartGeom, scales, technicalReplicates, this.props.colours);
+		drawVariants(
+			svg,
+			dimensions.chartGeom,
+			scales,
+			technicalReplicates,
+			this.props.variantData,
+			this.props.colours
+		);
 	}
 	setGeom() {
 		this.setState({ chartGeom: calcChartGeom(this.boundingDOMref.getBoundingClientRect()) });
