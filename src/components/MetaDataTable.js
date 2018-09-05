@@ -24,6 +24,13 @@ class MetaDataTable extends Component {
 			onSelect: this.props.onRowSelect,
 			onSelectAll: this.props.onSelectAll,
 			selected: this.props.selected,
+			bgColor: (row, isSelect) => {
+				if (isSelect) {
+					const color = this.props.colors[this.props.selected.indexOf(row.SPECID)];
+					return color;
+				}
+				return null;
+			},
 		};
 
 		const options = {

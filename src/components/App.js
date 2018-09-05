@@ -9,6 +9,7 @@ import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
 import Figures from './Figures';
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
+import { channelColours } from '../utils/commonStyles';
 
 class App extends Component {
 	constructor(props) {
@@ -253,6 +254,7 @@ class App extends Component {
 						selected={this.state.selected}
 						onRowSelect={this.onRowSelect}
 						onSelectAll={this.onSelectAll}
+						colors={channelColours}
 					/>
 				</div>
 				{/*<div>
