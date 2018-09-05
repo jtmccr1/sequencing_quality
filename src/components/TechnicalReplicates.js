@@ -35,6 +35,13 @@ export const drawVariants = (svg, chartGeom, scales, data, originalData, colours
 		})
 		.attr('r', 2)
 		.attr('fill', d => colours[Originalsamples.indexOf(d.Sample) % colours.length]);
+
+	svg.append('line')
+		.style('stroke', 'grey')
+		.attr('x1', scales.x(0.001))
+		.attr('y1', scales.y(0.001))
+		.attr('x2', scales.x(0.5))
+		.attr('y2', scales.y(0.5));
 };
 
 /* given the DOM dimensions of the chart container, calculate the chart geometry (used by the SVG & D3) */
