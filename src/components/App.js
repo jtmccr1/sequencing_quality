@@ -148,31 +148,41 @@ class App extends Component {
 		const currentSamples = this.state.variantData.map(x => x.Sample[0].split('_')[0]);
 		// Add the new samples
 		const newSPECID = this.state.selected.filter(x => currentSamples.indexOf(x) === -1);
-		console;
+		const oldSamples = this.state.variantData
+			.map(x => x.Sample[0].split('_')[0])
+			.filter(x => this.state.selected.indexOf(x) === -1);
 		const that = this;
-		async function addNew(newSPECID) {
-			console.log('here');
-			for (const SPECID of newSPECID) {
-				await getData(`processedSNV/${SPECID}.processed.json`, that.addData);
-			}
-			// wait until everything is updated then remove the deselected ones
+		const prefix = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : '';
+		let promiseList = [];
+		let newVariantData = [];
+		let newCoverageData = [];
+		this.setState({ data: false });
+		newSPECID.forEach(SPECID => {
+			promiseList.push(
+				fetch(`${prefix}/processedSNV/${SPECID}.processed.json`)
+					.then(res => res.json())
+					.then(jsonData => {
+						newVariantData.push(parseVariantData(jsonData)); //, key);
+						newCoverageData.push(parseCoverageData(jsonData));
+					})
+			);
+		});
+		Promise.all(promiseList).then(() => {
+			let currentVariants = that.state.variantData.filter(
+				x => oldSamples.indexOf(x.Sample[0].split('_')[0]) === -1
+			); // just those not in the old samples
+			currentVariants.push(...newVariantData);
+			let currentCoverage = that.state.coverageData.filter(
+				x => oldSamples.indexOf(x.Sample[0].split('_')[0]) === -1
+			); // just those not in the old samples
+			currentCoverage.push(...newCoverageData);
 
-			const updatedVariants = that.state.variantData.filter(x => {
-				const SPECID = x.Sample[0].split('_')[0];
-				return that.state.selected.indexOf(SPECID) > -1;
+			that.setState({
+				variantData: currentVariants,
+				coverageData: currentCoverage,
+				data: true,
 			});
-			const updatedCoverage = that.state.coverageData.filter(x => {
-				const SPECID = x.Sample[0].split('_')[0];
-				return that.state.selected.indexOf(SPECID) > -1;
-			});
-			if (updatedVariants.length !== that.state.variantData.length) {
-				that.setState({
-					variantData: updatedVariants,
-					coverageData: updatedCoverage,
-				});
-			}
-		}
-		addNew(newSPECID);
+		});
 	}
 	// ############ -- Table functions -- #####################
 	onRowSelect({ SPECID }, isSelected) {

@@ -47,6 +47,7 @@ export function reFormat(data) {
 	};
 }
 // ************* Processing duplicate functions *******************************
+
 const comp = (l, r) => l.concat_pos === r.concat_pos && l.nucleotide === r.nucleotide;
 const notInLast = R.pipe(
 	R.differenceWith(comp),

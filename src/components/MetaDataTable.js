@@ -26,7 +26,7 @@ class MetaDataTable extends Component {
 			selected: this.props.selected,
 			bgColor: (row, isSelect) => {
 				if (isSelect) {
-					const color = this.props.colors[this.props.selected.indexOf(row.SPECID)];
+					const color = this.props.colors[this.props.selected.indexOf(row.SPECID) % this.props.colors.length];
 					return color;
 				}
 				return null;
