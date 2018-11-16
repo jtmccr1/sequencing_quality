@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import logo from '../images/hive_logo.jpeg';
 import '../styles/App.css';
 import { getData } from '../utils/getData';
@@ -9,6 +8,9 @@ import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
 import { channelColours } from '../utils/commonStyles';
+import Panel from './CollapsablePanel';
+import CoveragePlot from './coveragePlot';
+import VariantPlot from './variantPlot';
 
 class App extends Component {
 	constructor(props) {
@@ -233,13 +235,35 @@ class App extends Component {
 
 				{this.state.data ? (
 					<div>
-						<Summary
+						{/*<Summary
 							filterPosition={this.filterPosition}
 							selectedPositions={this.state.selectedPositions}
 							coverageData={this.state.coverageData}
 							genomeAnnotation={this.state.genomeAnnotation}
 							variantData={this.state.variantData}
 							updateDisplay={this.updateDisplay}
+						/> */}
+						<Panel
+							title="Coverage"
+							child={CoveragePlot}
+							childProps={{
+								title: '',
+								coverageData: this.state.coverageData,
+								genomeAnnotation: this.state.genomeAnnotation,
+								colours: channelColours,
+								style: { width: '80%', margin: 'auto', height: '500px' },
+							}}
+						/>
+						<Panel
+							title="Minority Variants"
+							child={VariantPlot}
+							childProps={{
+								title: '',
+								variantData: this.state.variantData,
+								genomeAnnotation: this.state.genomeAnnotation,
+								colours: channelColours,
+								style: { width: '80%', margin: 'auto', height: '500px' },
+							}}
 						/>
 					</div>
 				) : (
