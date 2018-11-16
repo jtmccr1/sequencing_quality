@@ -265,6 +265,18 @@ class App extends Component {
 								style: { width: '80%', margin: 'auto', height: '500px' },
 							}}
 						/>
+						<Panel
+							title="Quality plots"
+							child={Summary}
+							childProps={{
+								filterPosition: this.filterPosition,
+								selectedPositions: this.state.selectedPositions,
+								coverageData: this.state.coverageData,
+								genomeAnnotation: this.state.genomeAnnotation,
+								variantData: this.state.variantData,
+								updateDisplay: this.updateDisplay,
+							}}
+						/>
 					</div>
 				) : (
 					<div>

@@ -34,7 +34,7 @@ class Summary extends React.Component {
 				<div {...panelContainer}>
 					<div {...panelTitle} />
 					<div {...flexRow}>
-						<CoveragePlot
+						{/*<CoveragePlot
 							style={{ width: '25%', margin: 'auto', height: '100%' }}
 							title={'Coverage'}
 							coverageData={this.props.coverageData}
@@ -47,15 +47,15 @@ class Summary extends React.Component {
 							variantData={this.props.variantData}
 							colours={channelColours}
 							genomeAnnotation={this.props.genomeAnnotation}
-						/>
+						/>*/}
 						<CummulativeDistribution
-							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							style={{ width: '50%', margin: 'auto', height: '100%' }}
 							title={'CDF of variant frequencies'}
 							variantData={this.props.variantData}
 							colours={channelColours}
 						/>
 						<TechnicalPlot
-							style={{ width: '25%', margin: 'auto', height: '100%' }}
+							style={{ width: '50%', margin: 'auto', height: '100%' }}
 							title={'Tenchical Replicates'}
 							variantData={this.props.variantData}
 							colours={channelColours}
