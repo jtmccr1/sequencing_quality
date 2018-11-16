@@ -67,7 +67,7 @@ const listToObject = R.pipe(
 const mergeLogic = (k, l, r) => {
 	// always the Same bewteen duplicate nucleotide, concat_pos,chr, pos,
 	const justOne = ['nucleotide', 'concat_pos', 'chr', 'pos', 'mutationalClass', 'allele', 'loci'];
-	const alwaysTwo = ['freq', 'count', 'coverage', 'Sample'];
+	const alwaysTwo = ['freq', 'count', 'coverage', 'Sample', 'freqRaw', 'countRaw', 'coverageRaw'];
 	if (R.indexOf(k, justOne) > -1) {
 		if (R.equals(l, r)) {
 			return l;
@@ -120,12 +120,20 @@ const correctMissing = R.pipe(
 );
 
 export function compareSites(data1, data2) {
-	// add loci key
-	const data1WithLoci = replaceGenome(R.map(pos => R.assoc('loci', `${pos.chr}:${pos.pos}`, pos), data1.genome))(
+	// These will be present if comparing samples that are the result of technical replicates - I am skipping them
+	const data1NoRaw = replaceGenome(R.map(pos => R.omit(['freqRaw', 'coverageRaw', 'countRaw'], pos), data1.genome))(
 		data1
 	);
-	const data2WithLoci = replaceGenome(R.map(pos => R.assoc('loci', `${pos.chr}:${pos.pos}`, pos), data2.genome))(
+	const data2NoRaw = replaceGenome(R.map(pos => R.omit(['freqRaw', 'coverageRaw', 'countRaw'], pos), data2.genome))(
 		data2
+	);
+
+	// add loci key
+	const data1WithLoci = replaceGenome(R.map(pos => R.assoc('loci', `${pos.chr}:${pos.pos}`, pos), data1NoRaw.genome))(
+		data1NoRaw
+	);
+	const data2WithLoci = replaceGenome(R.map(pos => R.assoc('loci', `${pos.chr}:${pos.pos}`, pos), data2NoRaw.genome))(
+		data2NoRaw
 	);
 
 	// replace the genome value with a new entry that is an object keyed by chr:posNuc (HA:100A) and contains 0's where alleles which were found in the other sample are missing
