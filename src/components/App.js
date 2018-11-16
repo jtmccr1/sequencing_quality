@@ -6,7 +6,6 @@ import { getData } from '../utils/getData';
 import Summary from './Summary';
 import MetaDataTable from './MetaDataTable';
 import FrequencyAndSegmentSelection from './FrequencyAndSegmentSelection';
-import Figures from './Figures';
 import { parseVariantData, parseCoverageData, parseGenomeAnnotation } from '../utils/parseData';
 import * as _ from 'lodash';
 import { channelColours } from '../utils/commonStyles';

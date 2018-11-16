@@ -1,4 +1,6 @@
 import React from 'react';
+import { css } from 'glamor';
+const style = css({ margin: '10px 10px 10px 10px' });
 
 export default function Filters(props) {
 	function updatePositions(evt) {
@@ -26,7 +28,7 @@ export default function Filters(props) {
 	}
 
 	return (
-		<div className="group">
+		<div className="group" {...style}>
 			<label htmlFor="seg-pos">Filter positions:</label>
 			<br />
 			<input

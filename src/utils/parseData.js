@@ -83,7 +83,7 @@ export function parseGenomeAnnotation(data) {
 	}
 	return ORFboxes;
 }
-
+/* 
 const data = {
 	Sample: 'test_sample',
 	genome: [
@@ -132,4 +132,4 @@ const data = {
 	],
 };
 
-parseCoverageData(data);
+parseCoverageData(data); */

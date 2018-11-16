@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import '../../node_modules/react-bootstrap-table/css/react-bootstrap-table.css';
+import { css } from 'glamor';
+
+const style = css({ margin: '10px 250px 100px 250px' });
 
 const textColumn = {
 	dataAlign: 'left',
@@ -39,7 +42,7 @@ class MetaDataTable extends Component {
 		};
 
 		return (
-			<div>
+			<div {...style}>
 				<h2>Samples to analyze</h2>
 				<BootstrapTable
 					data={this.props.data}

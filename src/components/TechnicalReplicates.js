@@ -1,6 +1,6 @@
 import React from 'react';
 import { select } from 'd3-selection';
-import { drawGenomeAnnotation, drawAxes, calcScales } from '../utils/commonFunctions';
+import { drawAxes, calcScales } from '../utils/commonFunctions';
 import { chartTitleCSS } from '../utils/commonStyles';
 
 export const drawVariants = (svg, chartGeom, scales, data, originalData, colours) => {

@@ -10,7 +10,7 @@ const panelContainer = css({
 	width: 'calc(100%-20px)',
 	height: '500' /* adjusting these will also adjust the graphs */,
 	minHeight: '500px',
-	margin: '10px 10px 10px 10px',
+	margin: '10px 100px 10px 50px',
 });
 
 export const panelTitle = css({
