@@ -13,7 +13,9 @@ const path = require('path');
 // 	process.exit(1);
 // }
 const objFromListWith = R.curry((fn, list) => R.chain(R.zipObj, R.map(fn))(list));
-const topDir = path.resolve('./processedSNV/longitudinal'); //path.resolve(args[1]);
+const topDir = path.resolve(
+	'/Users/jtmccrone/Documents/projects/wip/lauring-projects/withinhost_influenza_exploration/data/2014-2015_data/processedSNV/longitudinal'
+); //path.resolve(args[1]);
 const outputFile = './allLongitudinalVariants.json'; // args[2];
 let allData = {};
 glob('*.json', { cwd: topDir }, function(err, files) {
@@ -25,7 +27,7 @@ glob('*.json', { cwd: topDir }, function(err, files) {
 			//read in sample
 			const sampleData = JSON.parse(fs.readFileSync(`${topDir}/${sampleFile}`, 'utf8'));
 			const alleles = sampleData.genome.filter(
-				allele => allele.freqRaw.reduce((acc, cur) => Math.min(acc, cur), 0) < 0.5
+				allele => allele.freqRaw.reduce((acc, cur) => Math.min(acc, cur), 2) < 0.5 // The data will never be >1 so this is a good starting point
 			); // the allele in minor in at least one sample
 			const allelesWithSampleKey = R.map(R.assoc('Sample', sampleData.Sample[0][0].split('_')[0]), alleles);
 			allData = R.assoc(sampleData.Sample[0][0].split('_')[0], allelesWithSampleKey, allData);
